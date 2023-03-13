@@ -20,7 +20,7 @@ export default class Module1 extends Module {
         })
         this.mainStack.appendChild(this.picker1);
         this.picker2 = new ScomNetworkPicker(undefined, {
-            maxWidth: 200,
+            width: 300,
             type: 'combobox',
             env: this._options.env,
             networks: this._options.networks

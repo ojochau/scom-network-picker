@@ -14,9 +14,9 @@ export default Styles.style({
     },
     '::-webkit-scrollbar-thumb': {
       borderRadius: '12px',
-      background: 'rgba(255, 255, 255, 0.2) 0% 0% no-repeat padding-box'
+      background: 'rgba(0, 0, 0, 0.5) 0% 0% no-repeat padding-box'
     },
-    '#btnNetwork': {
+    '.btn-network': {
       boxShadow: 'none'
     },
     '.os-modal': {
@@ -35,13 +35,6 @@ export default Styles.style({
         },
         '.list-view': {
           $nest: {
-            '.list-item:hover': {
-              $nest: {
-                '> *': {
-                  opacity: 1
-                }
-              }
-            },
             '.list-item': {
               cursor: 'pointer',
               transition: 'all .3s ease-in',
@@ -53,27 +46,53 @@ export default Styles.style({
                       opacity: '0.5 !important',
                     }
                   }
-                },
-                '> *': {
-                  opacity: .5
                 }
               }
             },
-            '&.is-button .is-actived': {
+            '&.is-button': {
               $nest: {
-                '> *': {
-                  opacity: 1
+                '.is-actived': {
+                  $nest: {
+                    '> *': {
+                      opacity: 1
+                    },
+                    '&:after': {
+                      content: "''",
+                      top: '50%',
+                      left: 12,
+                      position: 'absolute',
+                      background: '#20bf55',
+                      borderRadius: '50%',
+                      width: 10,
+                      height: 10,
+                      transform: 'translate3d(-50%,-50%,0)'
+                    }
+                  }
                 },
-                '&:after': {
-                  content: "''",
-                  top: '50%',
-                  left: 12,
-                  position: 'absolute',
-                  background: '#20bf55',
-                  borderRadius: '50%',
-                  width: 10,
-                  height: 10,
-                  transform: 'translate3d(-50%,-50%,0)'
+                '.list-item': {
+                  $nest: {
+                    '> *': {
+                      opacity: .5
+                    }
+                  }
+                },
+                '.list-item:not(.is-actived):hover': {
+                  $nest: {
+                    '> *': {
+                      opacity: 1
+                    }
+                  }
+                }
+              }
+            },
+            '&.is-combobox': {
+              $nest: {
+                '.is-actived': {
+                  background: Theme.action.active,
+                  fontWeight: 600
+                },
+                '.list-item:not(.is-actived):hover': {
+                  background: Theme.action.hover
                 }
               }
             }
@@ -81,8 +100,26 @@ export default Styles.style({
         }
       }
     },
-    '.box-shadow': {
-      boxShadow: Theme.shadows[2]
+    '.box-shadow > div': {
+      boxShadow: '0 3px 6px -4px rgba(0,0,0,.12), 0 6px 16px 0 rgba(0,0,0,.08), 0 9px 28px 8px rgba(0,0,0,.05)'
+    },
+    '.is-ellipsis': {
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
+    },
+    '.btn-cb-network': {
+      justifyContent: "space-between"
+    },
+    '.btn-cb-network:hover': {
+      border: `1px solid ${Theme.colors.primary.main}`
+    },
+    '.btn-focus': {
+      border: `1px solid ${Theme.colors.primary.main}`,
+      boxShadow: '0 0 0 2px rgba(87, 75, 144, .2)'
+    },
+    '.full-width': {
+      width: '100%'
     }
   }
 })
