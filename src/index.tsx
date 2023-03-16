@@ -26,6 +26,7 @@ import {
   getWalletProvider,
   INetwork,
   isDefaultNetworkFromWallet,
+  isWalletConnected,
   switchNetwork,
   updateNetworks,
 } from './store/index'
@@ -114,12 +115,24 @@ export default class ScomNetworkPicker extends Module {
     )
   }
 
+  private updateConnectedLabel(isConnected: boolean) {
+    if (isConnected) {
+      this.lbConnected.caption = 'Connected'
+      this.lbConnected.font = {color: Theme.colors.success.main, weight: 500, size: '13px'}
+      this.lbConnected.background = {color: Theme.colors.success.light}
+    } else {
+      this.lbConnected.caption = 'Not Connected'
+      this.lbConnected.font = {color: Theme.colors.error.main, weight: 500, size: '13px'}
+      this.lbConnected.background = {color: Theme.colors.error.light}
+    }
+  }
+
   private updateConnectedStatus = () => {
     if (!this.btnNetwork) return
     const isSupportedNetwork =
       this.selectedNetwork &&
       this.supportedNetworks.findIndex((network) => network === this.selectedNetwork) !== -1
-    if (isSupportedNetwork) {
+    if (isSupportedNetwork && isWalletConnected()) {
       const img = this.selectedNetwork?.img
         ? Assets.img.network[this.selectedNetwork.img] ||
           application.assets(this.selectedNetwork.img)
@@ -137,9 +150,7 @@ export default class ScomNetworkPicker extends Module {
           <i-label caption="${this.selectedNetwork?.name ?? ''}"></i-label>
         </i-hstack>`
       }
-      this.lbConnected.caption = 'Connected'
-      this.lbConnected.font = {color: Theme.colors.success.main, weight: 500, size: '13px'}
-      this.lbConnected.background = {color: Theme.colors.success.light}
+      this.updateConnectedLabel(true)
       this.btnNetwork.opacity = 1;
     } else {
       this.btnNetwork.icon = undefined;
@@ -151,9 +162,7 @@ export default class ScomNetworkPicker extends Module {
         this.btnNetwork.caption = 'Please select a supported network'
         this.btnNetwork.opacity = 0.5
       }
-      this.lbConnected.caption = 'Not Connected'
-      this.lbConnected.font = {color: Theme.colors.error.main, weight: 500, size: '13px'}
-      this.lbConnected.background = {color: Theme.colors.error.light}
+      this.updateConnectedLabel(false)
     }
   }
 
@@ -398,8 +407,11 @@ export default class ScomNetworkPicker extends Module {
     updateNetworks({env, infuraId, networks, defaultChainId})
     document.addEventListener('click', (event) => {
       const target = event.target as Control
-      if (!target.closest('.btn-network')) {
+      const btnNetwork = target.closest('.btn-network')
+      if (!btnNetwork || !btnNetwork.isSameNode(this.btnNetwork)) {
         this.btnNetwork.classList.remove('btn-focus')
+      } else {
+        this.btnNetwork.classList.add('btn-focus')
       }
     })
   }
