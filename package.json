@@ -2,7 +2,7 @@
     "name": "@scom/scom-network-picker",
     "version": "0.1.0",
     "main": "dist/index.js",
-    "plugin": "dist/index.js",
+    "plugin": "dist",
     "pluginTypes": "pluginTypes/index.d.ts",
     "types": "types/index.d.ts",
     "engines": {
