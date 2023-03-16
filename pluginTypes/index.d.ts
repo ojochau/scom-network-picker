@@ -136,6 +136,7 @@ declare module "@scom/scom-network-picker" {
         get type(): IType;
         set type(value: IType);
         registerEvent(): void;
+        private updateConnectedLabel;
         private updateConnectedStatus;
         private onChainChanged;
         private renderNetworks;
