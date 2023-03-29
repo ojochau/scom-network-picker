@@ -10,36 +10,25 @@ import {
   HStack,
   application,
   Panel,
-  Label,
-  IEventBus,
   Container,
-  Icon,
   Control
 } from '@ijstech/components'
 import {} from '@ijstech/eth-contract'
 import Assets from './assets'
 import {
-  EventId,
-  getDefaultChainId,
-  getNetworkInfo,
-  getSiteSupportedNetworks,
-  getWalletProvider,
   INetwork,
-  isDefaultNetworkFromWallet,
-  isWalletConnected,
+  networks,
   switchNetwork,
-  updateNetworks,
 } from './store/index'
 import customStyles from './index.css'
-import { Wallet, WalletPlugin } from '@ijstech/eth-wallet'
 
 type IType = 'button' | 'combobox'
 interface PickerElement extends ControlElement {
   type?: IType
   networks?: INetwork[] | '*'
-  env?: string
-  infuraId?: string
-  defaultChainId?: number
+  selectedChainId?: number;
+  switchNetworkOnSelect?: boolean;
+  onCustomNetworkSelected?: (network: INetwork) => void;
 }
 const Theme = Styles.Theme.ThemeVars
 
@@ -58,22 +47,21 @@ export default class ScomNetworkPicker extends Module {
   private gridNetworkGroup: GridLayout
   private pnlNetwork: Panel
   private btnNetwork: Button
-  private lblNetworkDesc: Label
-  private pnlStatus: Panel
-  private lbConnected: Label
 
-  private $eventBus: IEventBus
   private _type: IType
   private networkMapper: Map<number, HStack>
-  private supportedNetworks: INetwork[] = []
-  private currActiveNetworkId: number
-  private selectedNetwork: INetwork | undefined
+  private _networkList: INetwork[] = []
+  private _selectedNetwork: INetwork | undefined
+  private _switchNetworkOnSelect: boolean
+  private networkPlaceholder = 'Select Network';
+  private _onCustomNetworkSelected: (network: INetwork) => void;
 
   constructor(parent?: Container, options?: any) {
     super(parent, options)
-    this.$eventBus = application.EventBus
-    this.registerEvent()
-    if (options) updateNetworks(options)
+  }
+
+  get selectedNetwork() {
+    return this._selectedNetwork
   }
 
   get type(): IType {
@@ -85,101 +73,83 @@ export default class ScomNetworkPicker extends Module {
     this.renderUI()
   }
 
-  registerEvent() {
-    let wallet = Wallet.getInstance()
-
-    this.$eventBus.register(
-      this,
-      EventId.IsWalletConnected,
-      async (connected: boolean) => {
-        this.selectedNetwork = getNetworkInfo(wallet.chainId)
-        this.updateConnectedStatus()
-        this.updateList(connected)
-      }
-    )
-    this.$eventBus.register(
-      this,
-      EventId.IsWalletDisconnected,
-      async (connected: boolean) => {
-        this.selectedNetwork = getNetworkInfo(wallet.chainId)
-        this.updateConnectedStatus()
-        this.updateList(connected)
-      }
-    )
-    this.$eventBus.register(
-      this,
-      EventId.chainChanged,
-      async (chainId: number) => {
-        this.onChainChanged(chainId)
-      }
-    )
+  setNetworkByChainId(chainId: number) {
+    const network = this.getNetwork(chainId)
+    if (network) this.setNetwork(network)
   }
 
-  private updateConnectedLabel(isConnected: boolean) {
-    if (isConnected) {
-      this.lbConnected.caption = 'Connected'
-      this.lbConnected.font = {color: Theme.colors.success.main, weight: 500, size: '13px'}
-      this.lbConnected.background = {color: Theme.colors.success.light}
+  clearNetwork(){
+    this._selectedNetwork = undefined
+    this.btnNetwork.caption = this.networkPlaceholder
+    this.networkMapper.forEach((value, key) => {
+      value.classList.remove('is-active')
+    });
+  }
+
+  private getNetwork(chainId: number) {
+    return this._networkList.find(net => net.chainId === chainId) || null
+  }
+
+  private getNetworkLabel() {
+    if (this._selectedNetwork) {
+      const img = this._selectedNetwork?.img
+      ? Assets.img.network[this._selectedNetwork.img] ||
+      application.assets(this._selectedNetwork.img)
+      : undefined
+      return `<i-hstack verticalAlignment="center" gap="1.125rem">
+        <i-panel>
+          <i-image width=${17} height=${17} url="${img}"></i-image>
+        </i-panel>
+        <i-label caption="${this._selectedNetwork?.name ?? ''}"></i-label>
+      </i-hstack>`
     } else {
-      this.lbConnected.caption = 'Not Connected'
-      this.lbConnected.font = {color: Theme.colors.error.main, weight: 500, size: '13px'}
-      this.lbConnected.background = {color: Theme.colors.error.light}
+      return this.type === 'button' ? 'Unsupported Network' : this.networkPlaceholder
     }
   }
 
-  private updateConnectedStatus = () => {
-    if (!this.btnNetwork) return
-    const isSupportedNetwork =
-      this.selectedNetwork &&
-      this.supportedNetworks.findIndex((network) => network === this.selectedNetwork) !== -1
-    if (isSupportedNetwork && isWalletConnected()) {
-      const img = this.selectedNetwork?.img
-        ? Assets.img.network[this.selectedNetwork.img] ||
-          application.assets(this.selectedNetwork.img)
-        : undefined
-      if (this.type === 'button') {
-        this.btnNetwork.icon = img ? (
-          <i-icon width={26} height={26} image={{ url: img }}></i-icon>
-        ) : undefined
-        this.btnNetwork.caption = this.selectedNetwork?.name ?? ''
-      } else {
-        this.btnNetwork.caption = `<i-hstack verticalAlignment="center" gap="1.125rem">
-          <i-panel>
-            <i-image width=${17} height=${17} url="${img}"></i-image>
-          </i-panel>
-          <i-label caption="${this.selectedNetwork?.name ?? ''}"></i-label>
-        </i-hstack>`
-      }
-      this.updateConnectedLabel(true)
+  private setNetwork(network: INetwork) {
+    this._selectedNetwork = network;
+    if (this.btnNetwork) {
+      this.btnNetwork.caption = this.getNetworkLabel();
       this.btnNetwork.opacity = 1;
-    } else {
-      this.btnNetwork.icon = undefined;
-      if (this.type === 'button') {
-        this.btnNetwork.caption = isDefaultNetworkFromWallet()
-          ? 'Unknown Network'
-          : 'Unsupported Network';
-      } else {
-        this.btnNetwork.caption = 'Please select a supported network'
-        this.btnNetwork.opacity = 0.5
-      }
-      this.updateConnectedLabel(false)
     }
+    this.networkMapper?.forEach((value, key) => {
+      const chainId = this._selectedNetwork?.chainId
+      if (key === chainId) {
+        value.classList.add('is-active')
+      }
+      else {
+        value.classList.remove('is-active')
+      }
+    });
   }
 
-  private onChainChanged = async (chainId: number) => {
-    this.selectedNetwork = getNetworkInfo(chainId)
-    let wallet = Wallet.getClientInstance()
-    const isConnected = wallet.isConnected
-    this.updateConnectedStatus()
-    this.updateList(isConnected)
+  private async onNetworkSelected(network: INetwork) {
+    this.mdNetwork.visible = false
+    if (!network) return
+    if (this._switchNetworkOnSelect)
+      await switchNetwork(network.chainId)
+    this.setNetwork(network)
+    this._onCustomNetworkSelected && this._onCustomNetworkSelected(network);
   }
+
+  // private updateConnectedLabel(isConnected: boolean) {
+  //   if (isConnected) {
+  //     this.lbConnected.caption = 'Connected'
+  //     this.lbConnected.font = {color: Theme.colors.success.main, weight: 500, size: '13px'}
+  //     this.lbConnected.background = {color: Theme.colors.success.light}
+  //   } else {
+  //     this.lbConnected.caption = 'Not Connected'
+  //     this.lbConnected.font = {color: Theme.colors.error.main, weight: 500, size: '13px'}
+  //     this.lbConnected.background = {color: Theme.colors.error.light}
+  //   }
+  // }
 
   private renderNetworks() {
     this.gridNetworkGroup.clearInnerHTML()
     this.networkMapper = new Map()
-    this.supportedNetworks = getSiteSupportedNetworks()
     this.gridNetworkGroup.append(
-      ...this.supportedNetworks.map((network) => {
+      ...this._networkList.map((network) => {
         const img = network.img ? (
           <i-image
             url={Assets.img.network[network.img] || application.assets(network.img)}
@@ -189,15 +159,14 @@ export default class ScomNetworkPicker extends Module {
         ) : (
           []
         )
-        const isActive = this.isNetworkActive(network.chainId)
-        if (isActive) this.currActiveNetworkId = network.chainId
+        const isActive = this._selectedNetwork ? this._selectedNetwork.chainId === network.chainId : false
         const hsNetwork = (
           <i-hstack
-            onClick={() => this.switchNetwork(network.chainId)}
+            onClick={() => this.onNetworkSelected(network)}
             background={{ color: this.type === 'button' ? Theme.colors.secondary.light : 'transparent' }}
             border={{ radius: this.type === 'button' ? 10 : '0px' }}
             position='relative'
-            class={isActive ? 'is-actived list-item' : 'list-item'}
+            class={isActive ? 'is-active list-item' : 'list-item'}
             verticalAlignment="center"
             overflow="hidden"
             padding={this.type === 'button' ? {top: '0.65rem', bottom: '0.65rem', left: '0.5rem', right: '0.5rem'} : {top: '5px', bottom: '5px', left: '0.75rem', right: '0.75rem'}}
@@ -282,7 +251,6 @@ export default class ScomNetworkPicker extends Module {
 
   private async renderUI() {
     this.pnlNetwork.clearInnerHTML()
-    this.pnlStatus.visible = this.type === 'combobox'
     if (this._type === 'combobox') await this.renderCombobox()
     else await this.renderButton()
     this.mdNetwork.item = this.renderModalItem()
@@ -291,9 +259,6 @@ export default class ScomNetworkPicker extends Module {
     this.pnlNetwork.appendChild(this.btnNetwork)
     this.pnlNetwork.appendChild(this.mdNetwork)
     this.renderNetworks()
-    if (this.currActiveNetworkId !== undefined)
-      this.selectedNetwork = getNetworkInfo(this.currActiveNetworkId)
-    this.updateConnectedStatus()
   }
 
   private async renderButton() {
@@ -311,7 +276,7 @@ export default class ScomNetworkPicker extends Module {
       },
       border: { radius: 5 },
       font: { color: Theme.colors.primary.contrastText },
-      caption: 'Unsupported Network',
+      caption: this.getNetworkLabel(),
       onClick: () => {
         this.mdNetwork.visible = !this.mdNetwork.visible
       }
@@ -338,7 +303,7 @@ export default class ScomNetworkPicker extends Module {
       font: { color: Theme.text.primary },
       rightIcon: { name: 'angle-down', width: 20, height: 20, fill: 'rgba(0,0,0,.45)' },
       background: { color: 'transparent' },
-      caption: 'Please select a supported network',
+      caption: this.getNetworkLabel(),
       onClick: () => {
         this.mdNetwork.visible = !this.mdNetwork.visible
         this.btnNetwork.classList.add('btn-focus')
@@ -347,64 +312,25 @@ export default class ScomNetworkPicker extends Module {
     this.btnNetwork.classList.add('btn-cb-network')
     this.mdNetwork.classList.add('box-shadow')
     this.mdNetwork.onClose = () => {
-      this.btnNetwork.opacity = this.currActiveNetworkId ? 1 : 0.5
+      this.btnNetwork.opacity = this._selectedNetwork?.chainId ? 1 : 0.5
     }
     this.mdNetwork.onOpen = () => {
       this.btnNetwork.opacity = 0.5
     }
   }
 
-  private isNetworkActive(chainId: number) {
-    return Wallet.getInstance().chainId === chainId
-  }
-
-  private async switchNetwork(chainId: number) {
-    this.mdNetwork.visible = false
-    if (!chainId || isDefaultNetworkFromWallet()) return
-    await switchNetwork(chainId)
-  }
-
-  private updateDot(connected: boolean) {
-    const wallet = Wallet.getClientInstance()
-    if (
-      this.currActiveNetworkId !== undefined &&
-      this.currActiveNetworkId !== null &&
-      this.networkMapper.has(this.currActiveNetworkId)
-    ) {
-      this.networkMapper
-        .get(this.currActiveNetworkId)
-        .classList.remove('is-actived')
-    }
-    if (connected && this.networkMapper.has(wallet.chainId)) {
-      this.networkMapper.get(wallet.chainId).classList.add('is-actived')
-    }
-    this.currActiveNetworkId = wallet.chainId
-  }
-
-  private updateList(isConnected: boolean) {
-    if (this.lblNetworkDesc) {
-      if (isConnected && getWalletProvider() !== WalletPlugin.MetaMask) {
-        this.lblNetworkDesc.caption =
-          'We support the following networks, please switch network in the connected wallet.'
-      } else {
-        this.lblNetworkDesc.caption =
-          'We support the following networks, please click to connect.'
-      }
-    }
-    this.updateDot(isConnected)
-  }
-
   init() {
-    this.selectedNetwork = getNetworkInfo(getDefaultChainId())
     this.classList.add(customStyles)
     super.init()
-    const typeAttr = this.getAttribute('type', true, 'button')
-    if (typeAttr) this.type = typeAttr
-    const env = this.getAttribute('env', true)
-    const infuraId = this.getAttribute('infuraId', true)
-    const networks = this.getAttribute('networks', true)
-    const defaultChainId = this.getAttribute('defaultChainId', true)
-    updateNetworks({env, infuraId, networks, defaultChainId})
+    const networksAttr = this.getAttribute('networks', true);
+    this._networkList = networksAttr === '*' ? networks : networksAttr;
+    const selectedChainId = this.getAttribute('selectedChainId', true);
+    if (selectedChainId)
+      this.setNetworkByChainId(selectedChainId);
+    this._switchNetworkOnSelect = this.getAttribute('switchNetworkOnSelect', true, false);
+    this._onCustomNetworkSelected = this.getAttribute('onCustomNetworkSelected', true);
+    this.type = this.getAttribute('type', true, 'button');
+
     document.addEventListener('click', (event) => {
       const target = event.target as Control
       const btnNetwork = target.closest('.btn-network')
@@ -418,7 +344,7 @@ export default class ScomNetworkPicker extends Module {
   render() {
     return (
       <i-panel width='100%'>
-        <i-hstack
+        {/* <i-hstack
           id="pnlStatus"
           verticalAlignment='center'
           horizontalAlignment='space-between'
@@ -434,7 +360,7 @@ export default class ScomNetworkPicker extends Module {
             border={{radius: 6}}
             lineHeight={1.5715}
           ></i-label>
-        </i-hstack>
+        </i-hstack> */}
         <i-panel id='pnlNetwork' width='100%'></i-panel>
       </i-panel>
     )

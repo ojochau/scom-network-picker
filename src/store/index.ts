@@ -3,7 +3,7 @@ import { Wallet, WalletPlugin } from '@ijstech/eth-wallet';
 import { EventId, INetwork } from './interface';
 export { EventId, INetwork };
 
-const networks: INetwork[] = [
+export const networks: INetwork[] = [
   {
     name: "Ethereum",
     chainId: 1,

@@ -79,6 +79,7 @@ declare module "@scom/scom-network-picker/store/interface.ts" {
 declare module "@scom/scom-network-picker/store/index.ts" {
     import { EventId, INetwork } from "@scom/scom-network-picker/store/interface.ts";
     export { EventId, INetwork };
+    export const networks: INetwork[];
     export const updateNetworks: (options: any) => void;
     export function getChainId(): number;
     export function getWalletProvider(): string;
@@ -107,9 +108,9 @@ declare module "@scom/scom-network-picker" {
     interface PickerElement extends ControlElement {
         type?: IType;
         networks?: INetwork[] | '*';
-        env?: string;
-        infuraId?: string;
-        defaultChainId?: number;
+        selectedChainId?: number;
+        switchNetworkOnSelect?: boolean;
+        onCustomNetworkSelected?: (network: INetwork) => void;
     }
     global {
         namespace JSX {
@@ -123,31 +124,28 @@ declare module "@scom/scom-network-picker" {
         private gridNetworkGroup;
         private pnlNetwork;
         private btnNetwork;
-        private lblNetworkDesc;
-        private pnlStatus;
-        private lbConnected;
-        private $eventBus;
         private _type;
         private networkMapper;
-        private supportedNetworks;
-        private currActiveNetworkId;
-        private selectedNetwork;
+        private _networkList;
+        private _selectedNetwork;
+        private _switchNetworkOnSelect;
+        private networkPlaceholder;
+        private _onCustomNetworkSelected;
         constructor(parent?: Container, options?: any);
+        get selectedNetwork(): INetwork;
         get type(): IType;
         set type(value: IType);
-        registerEvent(): void;
-        private updateConnectedLabel;
-        private updateConnectedStatus;
-        private onChainChanged;
+        setNetworkByChainId(chainId: number): void;
+        clearNetwork(): void;
+        private getNetwork;
+        private getNetworkLabel;
+        private setNetwork;
+        private onNetworkSelected;
         private renderNetworks;
         private renderModalItem;
         private renderUI;
         private renderButton;
         private renderCombobox;
-        private isNetworkActive;
-        private switchNetwork;
-        private updateDot;
-        private updateList;
         init(): void;
         render(): any;
     }

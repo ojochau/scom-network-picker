@@ -51,7 +51,7 @@ export default Styles.style({
             },
             '&.is-button': {
               $nest: {
-                '.is-actived': {
+                '.is-active': {
                   $nest: {
                     '> *': {
                       opacity: 1
@@ -76,7 +76,7 @@ export default Styles.style({
                     }
                   }
                 },
-                '.list-item:not(.is-actived):hover': {
+                '.list-item:not(.is-active):hover': {
                   $nest: {
                     '> *': {
                       opacity: 1
@@ -87,11 +87,11 @@ export default Styles.style({
             },
             '&.is-combobox': {
               $nest: {
-                '.is-actived': {
+                '.is-active': {
                   background: Theme.action.active,
                   fontWeight: 600
                 },
-                '.list-item:not(.is-actived):hover': {
+                '.list-item:not(.is-active):hover': {
                   background: Theme.action.hover
                 }
               }
