@@ -1,39 +1,7 @@
 /// <amd-module name="@scom/scom-network-picker/assets.ts" />
 declare module "@scom/scom-network-picker/assets.ts" {
-    type viewportType = "desktop" | "tablet" | "mobile";
-    interface ILogo {
-        header: string;
-        footer: string;
-    }
-    interface IBreakpoints {
-        mobile: number;
-        tablet: number;
-        desktop: number;
-    }
-    class Assets {
-        private static _instance;
-        private _breakpoints;
-        static get instance(): Assets;
-        get logo(): ILogo;
-        set breakpoints(value: IBreakpoints);
-        get breakpoints(): IBreakpoints;
-        get viewport(): viewportType;
-        private _getLogoPath;
-        private _getLogo;
-    }
-    export const assets: Assets;
     function fullPath(path: string): string;
     const _default: {
-        fonts: {
-            poppins: {
-                bold: string;
-                italic: string;
-                light: string;
-                medium: string;
-                regular: string;
-                thin: string;
-            };
-        };
         img: {
             network: {
                 bsc: string;
@@ -42,12 +10,6 @@ declare module "@scom/scom-network-picker/assets.ts" {
                 avax: string;
                 ftm: string;
                 polygon: string;
-            };
-            wallet: {
-                metamask: string;
-                trustwallet: string;
-                binanceChainWallet: string;
-                walletconnect: string;
             };
         };
         fullPath: typeof fullPath;
