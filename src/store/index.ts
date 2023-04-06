@@ -1,7 +1,12 @@
 import { application } from '@ijstech/components';
-import { Wallet, WalletPlugin } from '@ijstech/eth-wallet';
+import { Wallet } from '@ijstech/eth-wallet';
 import { EventId, INetwork } from './interface';
 export { EventId, INetwork };
+
+export enum WalletPlugin {
+  MetaMask = 'metamask',
+  WalletConnect = 'walletconnect',
+}
 
 export const networks: INetwork[] = [
   {
@@ -257,7 +262,7 @@ export async function switchNetwork(chainId: number) {
     return;
   }
   const wallet = Wallet.getClientInstance();
-  if (wallet?.clientSideProvider?.walletPlugin === WalletPlugin.MetaMask) {
+  if (wallet?.clientSideProvider?.name === WalletPlugin.MetaMask) {
     await wallet.switchNetwork(chainId);
   }
 }

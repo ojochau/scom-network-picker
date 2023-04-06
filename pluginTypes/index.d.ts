@@ -41,6 +41,10 @@ declare module "@scom/scom-network-picker/store/interface.ts" {
 declare module "@scom/scom-network-picker/store/index.ts" {
     import { EventId, INetwork } from "@scom/scom-network-picker/store/interface.ts";
     export { EventId, INetwork };
+    export enum WalletPlugin {
+        MetaMask = "metamask",
+        WalletConnect = "walletconnect"
+    }
     export const networks: INetwork[];
     export const updateNetworks: (options: any) => void;
     export function getChainId(): number;
