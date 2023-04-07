@@ -603,7 +603,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 },
                 border: { radius: 5, width: '1px', style: 'solid', color: Theme.divider },
                 font: { color: Theme.text.primary },
-                rightIcon: { name: 'angle-down', width: 20, height: 20, fill: 'rgba(0,0,0,.45)' },
+                rightIcon: { name: 'angle-down', width: 20, height: 20, fill: Theme.text.primary },
                 background: { color: 'transparent' },
                 caption: this.getNetworkLabel(),
                 onClick: () => {
