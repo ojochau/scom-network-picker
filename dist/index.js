@@ -15,12 +15,12 @@ define("@scom/scom-network-picker/assets.ts", ["require", "exports", "@ijstech/c
     exports.default = {
         img: {
             network: {
-                bsc: fullPath('img/network/bsc.png'),
-                eth: fullPath('img/network/eth.png'),
-                amio: fullPath('img/network/amio.png'),
-                avax: fullPath('img/network/avax.png'),
-                ftm: fullPath('img/network/ftm.png'),
-                polygon: fullPath('img/network/polygon.png'),
+                bsc: fullPath('img/networks/bsc.png'),
+                eth: fullPath('img/networks/eth.png'),
+                amio: fullPath('img/networks/amio.png'),
+                avax: fullPath('img/networks/avax.png'),
+                ftm: fullPath('img/networks/ftm.png'),
+                polygon: fullPath('img/networks/polygon.png'),
             }
         },
         fullPath
@@ -398,6 +398,9 @@ define("@scom/scom-network-picker/index.css.ts", ["require", "exports", "@ijstec
                                 }
                             }
                         }
+                    },
+                    '&> div': {
+                        transform: 'scale(1)'
                     }
                 }
             },
