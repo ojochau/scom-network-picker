@@ -10,8 +10,7 @@
         "esModuleInterop": true,        
         "forceConsistentCasingInFileNames": true,        
         "declaration": false,        
-        "baseUrl": ".",
-        "outFile": "dist/index.js"
+        "baseUrl": "."
     },
     "include": ["src/*.tsx", "src/*.ts"],
     "exclude": ["node_modules"]

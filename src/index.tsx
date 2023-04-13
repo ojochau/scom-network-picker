@@ -8,24 +8,23 @@ import {
   Modal,
   GridLayout,
   HStack,
-  application,
   Panel,
   Container,
   Control
 } from '@ijstech/components'
 import {} from '@ijstech/eth-contract'
-import Assets from './assets'
 import {
-  INetwork,
-  networks,
+  INetworkConfig,
+  getNetworks,
   switchNetwork,
 } from './store/index'
 import customStyles from './index.css'
+import { INetwork } from '@ijstech/eth-wallet'
 
 type IType = 'button' | 'combobox'
 interface PickerElement extends ControlElement {
   type?: IType
-  networks?: INetwork[] | '*'
+  networks?: INetworkConfig[] | '*'
   selectedChainId?: number;
   switchNetworkOnSelect?: boolean;
   onCustomNetworkSelected?: (network: INetwork) => void;
@@ -73,6 +72,13 @@ export default class ScomNetworkPicker extends Module {
     this.renderUI()
   }
 
+  get networkList() {
+    return this._networkList
+  }
+  set networkList(value: INetwork[]) {
+    this._networkList = value
+  }
+
   setNetworkByChainId(chainId: number) {
     const network = this.getNetwork(chainId)
     if (network) this.setNetwork(network)
@@ -92,15 +98,12 @@ export default class ScomNetworkPicker extends Module {
 
   private getNetworkLabel() {
     if (this._selectedNetwork) {
-      const img = this._selectedNetwork?.img
-      ? Assets.img.network[this._selectedNetwork.img] ||
-      application.assets(this._selectedNetwork.img)
-      : undefined
+      const img = this._selectedNetwork?.image || undefined
       return `<i-hstack verticalAlignment="center" gap="1.125rem">
         <i-panel>
           <i-image width=${17} height=${17} url="${img}"></i-image>
         </i-panel>
-        <i-label caption="${this._selectedNetwork?.name ?? ''}"></i-label>
+        <i-label caption="${this._selectedNetwork?.chainName ?? ''}"></i-label>
       </i-hstack>`
     } else {
       return this.type === 'button' ? 'Unsupported Network' : this.networkPlaceholder
@@ -150,9 +153,9 @@ export default class ScomNetworkPicker extends Module {
     this.networkMapper = new Map()
     this.gridNetworkGroup.append(
       ...this._networkList.map((network) => {
-        const img = network.img ? (
+        const img = network.image ? (
           <i-image
-            url={Assets.img.network[network.img] || application.assets(network.img)}
+            url={network.image}
             width={this.type === 'button' ? 34 : 16}
             height={this.type === 'button' ? 34 : 16}
           />
@@ -179,7 +182,7 @@ export default class ScomNetworkPicker extends Module {
             >
               <i-panel>{img}</i-panel>
               <i-label
-                caption={network.name}
+                caption={network.chainName}
                 wordBreak='break-word'
                 font={{
                   size: '.875rem',
@@ -323,7 +326,7 @@ export default class ScomNetworkPicker extends Module {
     this.classList.add(customStyles)
     super.init()
     const networksAttr = this.getAttribute('networks', true);
-    this._networkList = networksAttr === '*' ? networks : networksAttr;
+    this._networkList = getNetworks(networksAttr);
     const selectedChainId = this.getAttribute('selectedChainId', true);
     if (selectedChainId)
       this.setNetworkByChainId(selectedChainId);
