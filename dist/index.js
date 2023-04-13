@@ -4,282 +4,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define("@scom/scom-network-picker/assets.ts", ["require", "exports", "@ijstech/components"], function (require, exports, components_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    const moduleDir = components_1.application.currentModuleDir;
-    function fullPath(path) {
-        return `${moduleDir}/${path}`;
-    }
-    ;
-    exports.default = {
-        img: {
-            network: {
-                bsc: fullPath('img/networks/bsc.png'),
-                eth: fullPath('img/networks/eth.png'),
-                amio: fullPath('img/networks/amio.png'),
-                avax: fullPath('img/networks/avax.png'),
-                ftm: fullPath('img/networks/ftm.png'),
-                polygon: fullPath('img/networks/polygon.png'),
-            }
-        },
-        fullPath
-    };
-});
 define("@scom/scom-network-picker/store/interface.ts", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     ;
-    ;
 });
-define("@scom/scom-network-picker/store/index.ts", ["require", "exports", "@ijstech/components", "@ijstech/eth-wallet"], function (require, exports, components_2, eth_wallet_1) {
+define("@scom/scom-network-picker/store/index.ts", ["require", "exports", "@ijstech/components", "@ijstech/eth-wallet", "@scom/scom-network-list"], function (require, exports, components_1, eth_wallet_1, scom_network_list_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.switchNetwork = exports.isWalletConnected = exports.isDefaultNetworkFromWallet = exports.getEnv = exports.getInfuraId = exports.isValidEnv = exports.getSiteSupportedNetworks = exports.getDefaultChainId = exports.getNetworkType = exports.getNetworkList = exports.getNetworkInfo = exports.getWalletProvider = exports.getChainId = exports.updateNetworks = exports.networks = exports.WalletPlugin = void 0;
+    exports.getNetworks = exports.switchNetwork = exports.isWalletConnected = exports.WalletPlugin = void 0;
     var WalletPlugin;
     (function (WalletPlugin) {
         WalletPlugin["MetaMask"] = "metamask";
         WalletPlugin["WalletConnect"] = "walletconnect";
     })(WalletPlugin = exports.WalletPlugin || (exports.WalletPlugin = {}));
-    exports.networks = [
-        {
-            name: "Ethereum",
-            chainId: 1,
-            img: "eth",
-            rpc: "https://mainnet.infura.io/v3/{InfuraId}",
-            symbol: "ETH",
-            env: "mainnet",
-            explorerName: "Etherscan",
-            explorerTxUrl: "https://etherscan.io/tx/",
-            explorerAddressUrl: "https://etherscan.io/address/"
-        },
-        {
-            name: "Kovan Test Network",
-            chainId: 42,
-            img: "eth",
-            rpc: "https://kovan.infura.io/v3/{InfuraId}",
-            symbol: "ETH",
-            env: "testnet",
-            explorerName: "Etherscan",
-            explorerTxUrl: "https://kovan.etherscan.io/tx/",
-            explorerAddressUrl: "https://kovan.etherscan.io/address/"
-        },
-        {
-            name: "Binance Smart Chain",
-            chainId: 56,
-            img: "bsc",
-            rpc: "https://bsc-dataseed.binance.org/",
-            symbol: "BNB",
-            env: "mainnet",
-            explorerName: "BSCScan",
-            explorerTxUrl: "https://bscscan.com/tx/",
-            explorerAddressUrl: "https://bscscan.com/address/"
-        },
-        {
-            name: "Polygon",
-            chainId: 137,
-            img: "polygon",
-            symbol: "MATIC",
-            env: "mainnet",
-            explorerName: "PolygonScan",
-            explorerTxUrl: "https://polygonscan.com/tx/",
-            explorerAddressUrl: "https://polygonscan.com/address/"
-        },
-        {
-            name: "Fantom Opera",
-            chainId: 250,
-            img: "ftm",
-            rpc: "https://rpc.ftm.tools/",
-            symbol: "FTM",
-            env: "mainnet",
-            explorerName: "FTMScan",
-            explorerTxUrl: "https://ftmscan.com/tx/",
-            explorerAddressUrl: "https://ftmscan.com/address/"
-        },
-        {
-            name: "BSC Testnet",
-            chainId: 97,
-            img: "bsc",
-            rpc: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-            symbol: "BNB",
-            env: "testnet",
-            explorerName: "BSCScan",
-            explorerTxUrl: "https://testnet.bscscan.com/tx/",
-            explorerAddressUrl: "https://testnet.bscscan.com/address/"
-        },
-        {
-            name: "Amino Testnet",
-            chainId: 31337,
-            img: "amio",
-            symbol: "ACT",
-            env: "testnet"
-        },
-        {
-            name: "Avalanche FUJI C-Chain",
-            chainId: 43113,
-            img: "avax",
-            rpc: "https://api.avax-test.network/ext/bc/C/rpc",
-            symbol: "AVAX",
-            env: "testnet",
-            explorerName: "SnowTrace",
-            explorerTxUrl: "https://testnet.snowtrace.io/tx/",
-            explorerAddressUrl: "https://testnet.snowtrace.io/address/"
-        },
-        {
-            name: "Mumbai",
-            chainId: 80001,
-            img: "polygon",
-            rpc: "https://matic-mumbai.chainstacklabs.com",
-            symbol: "MATIC",
-            env: "testnet",
-            explorerName: "PolygonScan",
-            explorerTxUrl: "https://mumbai.polygonscan.com/tx/",
-            explorerAddressUrl: "https://mumbai.polygonscan.com/address/"
-        },
-        {
-            name: "Fantom Testnet",
-            chainId: 4002,
-            img: "ftm",
-            rpc: "https://rpc.testnet.fantom.network/",
-            symbol: "FTM",
-            env: "testnet",
-            explorerName: "FTMScan",
-            explorerTxUrl: "https://testnet.ftmscan.com/tx/",
-            explorerAddressUrl: "https://testnet.ftmscan.com/address/"
-        },
-        {
-            name: "AminoX Testnet",
-            chainId: 13370,
-            img: "amio",
-            symbol: "ACT",
-            env: "testnet",
-            explorerName: "AminoX Explorer",
-            explorerTxUrl: "https://aminoxtestnet.blockscout.alphacarbon.network/tx/",
-            explorerAddressUrl: "https://aminoxtestnet.blockscout.alphacarbon.network/address/"
-        }
-    ];
-    const updateNetworks = (options) => {
-        if (options.env) {
-            setEnv(options.env);
-        }
-        if (options.infuraId) {
-            setInfuraId(options.infuraId);
-        }
-        if (options.networks) {
-            setNetworkList(options.networks, options.infuraId);
-        }
-        if (options.defaultChainId) {
-            setDefaultChainId(options.defaultChainId);
-        }
-    };
-    exports.updateNetworks = updateNetworks;
-    function getChainId() {
-        return eth_wallet_1.Wallet.getInstance().chainId;
-    }
-    exports.getChainId = getChainId;
-    ;
-    function getWalletProvider() {
-        return localStorage.getItem('walletProvider') || '';
-    }
-    exports.getWalletProvider = getWalletProvider;
-    ;
-    const state = {
-        networkMap: {},
-        defaultChainId: 0,
-        infuraId: "",
-        env: "",
-        defaultNetworkFromWallet: false,
-        requireLogin: false
-    };
-    function getWallet() {
-        return eth_wallet_1.Wallet.getInstance();
-    }
-    ;
-    const setNetworkList = (networkList, infuraId) => {
-        var _a;
-        state.networkMap = {};
-        state.defaultNetworkFromWallet = networkList === "*";
-        if (state.defaultNetworkFromWallet) {
-            const wallet = getWallet();
-            const networksMap = wallet.networksMap;
-            for (const chainId in networksMap) {
-                const networkInfo = networksMap[chainId];
-                const rpc = networkInfo.rpcUrls && networkInfo.rpcUrls.length ? networkInfo.rpcUrls[0] : "";
-                const explorerUrl = networkInfo.blockExplorerUrls && networkInfo.blockExplorerUrls.length ? networkInfo.blockExplorerUrls[0] : "";
-                state.networkMap[networkInfo.chainId] = {
-                    chainId: networkInfo.chainId,
-                    name: networkInfo.chainName,
-                    rpc: state.infuraId && rpc ? rpc.replace(/{InfuraId}/g, state.infuraId) : rpc,
-                    symbol: ((_a = networkInfo.nativeCurrency) === null || _a === void 0 ? void 0 : _a.symbol) || "",
-                    explorerTxUrl: explorerUrl ? `${explorerUrl}${explorerUrl.endsWith("/") ? "" : "/"}tx/` : "",
-                    explorerAddressUrl: explorerUrl ? `${explorerUrl}${explorerUrl.endsWith("/") ? "" : "/"}address/` : "",
-                };
-            }
-            return;
-        }
-        exports.networks.forEach(network => {
-            const rpc = infuraId && network.rpc ? network.rpc.replace(/{InfuraId}/g, infuraId) : network.rpc;
-            state.networkMap[network.chainId] = Object.assign(Object.assign({}, network), { isDisabled: true, rpc });
-        });
-        if (Array.isArray(networkList)) {
-            for (let network of networkList) {
-                if (infuraId && network.rpc) {
-                    network.rpc = network.rpc.replace(/{InfuraId}/g, infuraId);
-                }
-                Object.assign(state.networkMap[network.chainId], Object.assign({ isDisabled: false }, network));
-            }
-        }
-    };
-    const getNetworkInfo = (chainId) => {
-        return state.networkMap[chainId];
-    };
-    exports.getNetworkInfo = getNetworkInfo;
-    const getNetworkList = () => {
-        return Object.values(state.networkMap);
-    };
-    exports.getNetworkList = getNetworkList;
-    const getNetworkType = (chainId) => {
-        var _a;
-        let network = exports.getNetworkInfo(chainId);
-        return (_a = network === null || network === void 0 ? void 0 : network.explorerName) !== null && _a !== void 0 ? _a : 'Unknown';
-    };
-    exports.getNetworkType = getNetworkType;
-    const setDefaultChainId = (chainId) => {
-        state.defaultChainId = chainId;
-    };
-    const getDefaultChainId = () => {
-        return state.defaultChainId;
-    };
-    exports.getDefaultChainId = getDefaultChainId;
-    const getSiteSupportedNetworks = () => {
-        let networkFullList = Object.values(state.networkMap);
-        let list = networkFullList.filter(network => !network.isDisabled && exports.isValidEnv(network.env));
-        return list;
-    };
-    exports.getSiteSupportedNetworks = getSiteSupportedNetworks;
-    const isValidEnv = (env) => {
-        const _env = state.env === 'testnet' || state.env === 'mainnet' ? state.env : "";
-        return !_env || !env || env === _env;
-    };
-    exports.isValidEnv = isValidEnv;
-    const setInfuraId = (infuraId) => {
-        state.infuraId = infuraId;
-    };
-    const getInfuraId = () => {
-        return state.infuraId;
-    };
-    exports.getInfuraId = getInfuraId;
-    const setEnv = (env) => {
-        state.env = env;
-    };
-    const getEnv = () => {
-        return state.env;
-    };
-    exports.getEnv = getEnv;
-    const isDefaultNetworkFromWallet = () => {
-        return state.defaultNetworkFromWallet;
-    };
-    exports.isDefaultNetworkFromWallet = isDefaultNetworkFromWallet;
     function isWalletConnected() {
         const wallet = eth_wallet_1.Wallet.getClientInstance();
         return wallet.isConnected;
@@ -288,7 +26,7 @@ define("@scom/scom-network-picker/store/index.ts", ["require", "exports", "@ijst
     async function switchNetwork(chainId) {
         var _a;
         if (!isWalletConnected()) {
-            components_2.application.EventBus.dispatch("chainChanged" /* chainChanged */, chainId);
+            components_1.application.EventBus.dispatch("chainChanged" /* chainChanged */, chainId);
             return;
         }
         const wallet = eth_wallet_1.Wallet.getClientInstance();
@@ -297,12 +35,26 @@ define("@scom/scom-network-picker/store/index.ts", ["require", "exports", "@ijst
         }
     }
     exports.switchNetwork = switchNetwork;
+    const getNetworks = (value) => {
+        if (!value)
+            return [];
+        const defaultNetworks = scom_network_list_1.default();
+        if (value === '*')
+            return defaultNetworks;
+        return value.reduce((result, item) => {
+            const network = defaultNetworks.find(net => net.chainId === item.chainId);
+            if (network)
+                result.push(network);
+            return result;
+        }, []);
+    };
+    exports.getNetworks = getNetworks;
 });
-define("@scom/scom-network-picker/index.css.ts", ["require", "exports", "@ijstech/components"], function (require, exports, components_3) {
+define("@scom/scom-network-picker/index.css.ts", ["require", "exports", "@ijstech/components"], function (require, exports, components_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    const Theme = components_3.Styles.Theme.ThemeVars;
-    exports.default = components_3.Styles.style({
+    const Theme = components_2.Styles.Theme.ThemeVars;
+    exports.default = components_2.Styles.style({
         $nest: {
             '::-webkit-scrollbar-track': {
                 borderRadius: '12px',
@@ -428,11 +180,11 @@ define("@scom/scom-network-picker/index.css.ts", ["require", "exports", "@ijstec
         }
     });
 });
-define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components", "@scom/scom-network-picker/assets.ts", "@scom/scom-network-picker/store/index.ts", "@scom/scom-network-picker/index.css.ts"], function (require, exports, components_4, assets_1, index_1, index_css_1) {
+define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components", "@scom/scom-network-picker/store/index.ts", "@scom/scom-network-picker/index.css.ts"], function (require, exports, components_3, index_1, index_css_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    const Theme = components_4.Styles.Theme.ThemeVars;
-    let ScomNetworkPicker = class ScomNetworkPicker extends components_4.Module {
+    const Theme = components_3.Styles.Theme.ThemeVars;
+    let ScomNetworkPicker = class ScomNetworkPicker extends components_3.Module {
         constructor(parent, options) {
             super(parent, options);
             this._networkList = [];
@@ -449,6 +201,12 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 return;
             this._type = value;
             this.renderUI();
+        }
+        get networkList() {
+            return this._networkList;
+        }
+        set networkList(value) {
+            this._networkList = value;
         }
         setNetworkByChainId(chainId) {
             const network = this.getNetwork(chainId);
@@ -468,15 +226,12 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
         getNetworkLabel() {
             var _a, _b, _c;
             if (this._selectedNetwork) {
-                const img = ((_a = this._selectedNetwork) === null || _a === void 0 ? void 0 : _a.img)
-                    ? assets_1.default.img.network[this._selectedNetwork.img] ||
-                        components_4.application.assets(this._selectedNetwork.img)
-                    : undefined;
+                const img = ((_a = this._selectedNetwork) === null || _a === void 0 ? void 0 : _a.image) || undefined;
                 return `<i-hstack verticalAlignment="center" gap="1.125rem">
         <i-panel>
           <i-image width=${17} height=${17} url="${img}"></i-image>
         </i-panel>
-        <i-label caption="${(_c = (_b = this._selectedNetwork) === null || _b === void 0 ? void 0 : _b.name) !== null && _c !== void 0 ? _c : ''}"></i-label>
+        <i-label caption="${(_c = (_b = this._selectedNetwork) === null || _b === void 0 ? void 0 : _b.chainName) !== null && _c !== void 0 ? _c : ''}"></i-label>
       </i-hstack>`;
             }
             else {
@@ -525,12 +280,12 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             this.gridNetworkGroup.clearInnerHTML();
             this.networkMapper = new Map();
             this.gridNetworkGroup.append(...this._networkList.map((network) => {
-                const img = network.img ? (this.$render("i-image", { url: assets_1.default.img.network[network.img] || components_4.application.assets(network.img), width: this.type === 'button' ? 34 : 16, height: this.type === 'button' ? 34 : 16 })) : ([]);
+                const img = network.image ? (this.$render("i-image", { url: network.image, width: this.type === 'button' ? 34 : 16, height: this.type === 'button' ? 34 : 16 })) : ([]);
                 const isActive = this._selectedNetwork ? this._selectedNetwork.chainId === network.chainId : false;
                 const hsNetwork = (this.$render("i-hstack", { onClick: () => this.onNetworkSelected(network), background: { color: this.type === 'button' ? Theme.colors.secondary.light : 'transparent' }, border: { radius: this.type === 'button' ? 10 : '0px' }, position: 'relative', class: isActive ? 'is-active list-item' : 'list-item', verticalAlignment: "center", overflow: "hidden", padding: this.type === 'button' ? { top: '0.65rem', bottom: '0.65rem', left: '0.5rem', right: '0.5rem' } : { top: '5px', bottom: '5px', left: '0.75rem', right: '0.75rem' } },
                     this.$render("i-hstack", { margin: { left: this.type === 'button' ? '1rem' : '0px' }, verticalAlignment: 'center', gap: this.type === 'button' ? '0.75rem' : '1.125rem', lineHeight: 1.375 },
                         this.$render("i-panel", null, img),
-                        this.$render("i-label", { caption: network.name, wordBreak: 'break-word', font: {
+                        this.$render("i-label", { caption: network.chainName, wordBreak: 'break-word', font: {
                                 size: '.875rem',
                                 bold: this.type === 'button',
                                 color: this.type === 'button' ? Theme.colors.primary.dark : Theme.text.primary,
@@ -568,11 +323,11 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             this.renderNetworks();
         }
         async renderButton() {
-            this.mdNetwork = await components_4.Modal.create({
+            this.mdNetwork = await components_3.Modal.create({
                 width: 440,
                 border: { radius: 10 }
             });
-            this.btnNetwork = await components_4.Button.create({
+            this.btnNetwork = await components_3.Button.create({
                 height: 40,
                 padding: {
                     top: '0.5rem',
@@ -589,13 +344,13 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             });
         }
         async renderCombobox() {
-            this.mdNetwork = await components_4.Modal.create({
+            this.mdNetwork = await components_3.Modal.create({
                 showBackdrop: false,
                 minWidth: 200,
                 popupPlacement: 'bottom'
             });
             this.mdNetwork.classList.add('full-width');
-            this.btnNetwork = await components_4.Button.create({
+            this.btnNetwork = await components_3.Button.create({
                 lineHeight: 1.875,
                 width: '100%',
                 padding: {
@@ -628,7 +383,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             this.classList.add(index_css_1.default);
             super.init();
             const networksAttr = this.getAttribute('networks', true);
-            this._networkList = networksAttr === '*' ? index_1.networks : networksAttr;
+            this._networkList = index_1.getNetworks(networksAttr);
             const selectedChainId = this.getAttribute('selectedChainId', true);
             if (selectedChainId)
                 this.setNetworkByChainId(selectedChainId);
@@ -652,8 +407,8 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
         }
     };
     ScomNetworkPicker = __decorate([
-        components_4.customModule,
-        components_4.customElements('i-scom-network-picker')
+        components_3.customModule,
+        components_3.customElements('i-scom-network-picker')
     ], ScomNetworkPicker);
     exports.default = ScomNetworkPicker;
 });

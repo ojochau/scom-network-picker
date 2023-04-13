@@ -1,79 +1,43 @@
-/// <amd-module name="@scom/scom-network-picker/assets.ts" />
-declare module "@scom/scom-network-picker/assets.ts" {
-    function fullPath(path: string): string;
-    const _default: {
-        img: {
-            network: {
-                bsc: string;
-                eth: string;
-                amio: string;
-                avax: string;
-                ftm: string;
-                polygon: string;
-            };
-        };
-        fullPath: typeof fullPath;
-    };
-    export default _default;
-}
 /// <amd-module name="@scom/scom-network-picker/store/interface.ts" />
 declare module "@scom/scom-network-picker/store/interface.ts" {
-    export interface INetwork {
-        chainId: number;
-        name: string;
-        img?: string;
-        rpc?: string;
-        symbol?: string;
-        env?: string;
-        explorerName?: string;
-        explorerTxUrl?: string;
-        explorerAddressUrl?: string;
-        isDisabled?: boolean;
-    }
     export const enum EventId {
         ConnectWallet = "connectWallet",
         IsWalletConnected = "isWalletConnected",
         chainChanged = "chainChanged",
         IsWalletDisconnected = "IsWalletDisconnected"
     }
+    export interface INetworkConfig {
+        chainId: number;
+        chainName?: string;
+    }
 }
 /// <amd-module name="@scom/scom-network-picker/store/index.ts" />
 declare module "@scom/scom-network-picker/store/index.ts" {
-    import { EventId, INetwork } from "@scom/scom-network-picker/store/interface.ts";
-    export { EventId, INetwork };
+    import { INetwork } from '@ijstech/eth-wallet';
+    import { EventId, INetworkConfig } from "@scom/scom-network-picker/store/interface.ts";
+    export { EventId, INetworkConfig };
     export enum WalletPlugin {
         MetaMask = "metamask",
         WalletConnect = "walletconnect"
     }
-    export const networks: INetwork[];
-    export const updateNetworks: (options: any) => void;
-    export function getChainId(): number;
-    export function getWalletProvider(): string;
-    export const getNetworkInfo: (chainId: number) => INetwork | undefined;
-    export const getNetworkList: () => INetwork[];
-    export const getNetworkType: (chainId: number) => string;
-    export const getDefaultChainId: () => number;
-    export const getSiteSupportedNetworks: () => INetwork[];
-    export const isValidEnv: (env: string) => boolean;
-    export const getInfuraId: () => string;
-    export const getEnv: () => string;
-    export const isDefaultNetworkFromWallet: () => boolean;
     export function isWalletConnected(): boolean;
     export function switchNetwork(chainId: number): Promise<void>;
+    export const getNetworks: (value: INetworkConfig[] | '*') => INetwork[];
 }
 /// <amd-module name="@scom/scom-network-picker/index.css.ts" />
 declare module "@scom/scom-network-picker/index.css.ts" {
-    const _default_1: string;
-    export default _default_1;
+    const _default: string;
+    export default _default;
 }
 /// <amd-module name="@scom/scom-network-picker" />
 declare module "@scom/scom-network-picker" {
     import { ControlElement, Module, Container } from '@ijstech/components';
-    import { INetwork } from "@scom/scom-network-picker/store/index.ts";
+    import { INetworkConfig } from "@scom/scom-network-picker/store/index.ts";
+    import { INetwork } from '@ijstech/eth-wallet';
     type IType = 'button' | 'combobox';
     interface PickerElement extends ControlElement {
         type?: IType;
-        networks?: INetwork[] | '*';
+        networks?: INetworkConfig[] | '*';
         selectedChainId?: number;
         switchNetworkOnSelect?: boolean;
         onCustomNetworkSelected?: (network: INetwork) => void;
@@ -101,6 +65,8 @@ declare module "@scom/scom-network-picker" {
         get selectedNetwork(): INetwork;
         get type(): IType;
         set type(value: IType);
+        get networkList(): INetwork[];
+        set networkList(value: INetwork[]);
         setNetworkByChainId(chainId: number): void;
         clearNetwork(): void;
         private getNetwork;
