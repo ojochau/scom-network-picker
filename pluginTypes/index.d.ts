@@ -33,6 +33,7 @@ declare module "@scom/scom-network-picker/index.css.ts" {
 declare module "@scom/scom-network-picker" {
     import { ControlElement, Module, Container } from '@ijstech/components';
     import { INetworkConfig } from "@scom/scom-network-picker/store/index.ts";
+    export { INetworkConfig };
     import { INetwork } from '@ijstech/eth-wallet';
     type IType = 'button' | 'combobox';
     interface PickerElement extends ControlElement {
@@ -67,6 +68,7 @@ declare module "@scom/scom-network-picker" {
         set type(value: IType);
         get networkList(): INetwork[];
         set networkList(value: INetwork[]);
+        set networks(value: INetworkConfig[]);
         setNetworkByChainId(chainId: number): void;
         clearNetwork(): void;
         private getNetwork;

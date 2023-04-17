@@ -208,6 +208,9 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
         set networkList(value) {
             this._networkList = value;
         }
+        set networks(value) {
+            this._networkList = index_1.getNetworks(value);
+        }
         setNetworkByChainId(chainId) {
             const network = this.getNetwork(chainId);
             if (network)

@@ -18,6 +18,7 @@ import {
   getNetworks,
   switchNetwork,
 } from './store/index'
+export {INetworkConfig};
 import customStyles from './index.css'
 import { INetwork } from '@ijstech/eth-wallet'
 
@@ -77,6 +78,10 @@ export default class ScomNetworkPicker extends Module {
   }
   set networkList(value: INetwork[]) {
     this._networkList = value
+  }
+
+  set networks(value: INetworkConfig[]) {
+    this._networkList = getNetworks(value);
   }
 
   setNetworkByChainId(chainId: number) {
