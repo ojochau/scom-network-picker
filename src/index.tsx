@@ -155,6 +155,7 @@ export default class ScomNetworkPicker extends Module {
   // }
 
   private renderNetworks() {
+    if (!this.gridNetworkGroup) return;
     this.gridNetworkGroup.clearInnerHTML()
     this.networkMapper = new Map()
     this.gridNetworkGroup.append(

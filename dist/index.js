@@ -282,6 +282,8 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
         //   }
         // }
         renderNetworks() {
+            if (!this.gridNetworkGroup)
+                return;
             this.gridNetworkGroup.clearInnerHTML();
             this.networkMapper = new Map();
             this.gridNetworkGroup.append(...this._networkList.map((network) => {
