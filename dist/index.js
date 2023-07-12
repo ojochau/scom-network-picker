@@ -26,7 +26,7 @@ define("@scom/scom-network-picker/store/index.ts", ["require", "exports", "@ijst
     async function switchNetwork(chainId) {
         var _a;
         if (!isWalletConnected()) {
-            components_1.application.EventBus.dispatch("chainChanged" /* EventId.chainChanged */, chainId);
+            components_1.application.EventBus.dispatch("chainChanged" /* chainChanged */, chainId);
             return;
         }
         const wallet = eth_wallet_1.Wallet.getClientInstance();
@@ -38,7 +38,7 @@ define("@scom/scom-network-picker/store/index.ts", ["require", "exports", "@ijst
     const getNetworks = (value) => {
         if (!value)
             return [];
-        const defaultNetworks = (0, scom_network_list_1.default)();
+        const defaultNetworks = scom_network_list_1.default();
         if (value === '*')
             return defaultNetworks;
         return value.reduce((result, item) => {
@@ -209,7 +209,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             this._networkList = value;
         }
         set networks(value) {
-            this._networkList = (0, index_1.getNetworks)(value);
+            this._networkList = index_1.getNetworks(value);
             if (this._type)
                 this.renderNetworks();
         }
@@ -266,7 +266,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             if (!network)
                 return;
             if (this._switchNetworkOnSelect)
-                await (0, index_1.switchNetwork)(network.chainId);
+                await index_1.switchNetwork(network.chainId);
             this.setNetwork(network);
             this._onCustomNetworkSelected && this._onCustomNetworkSelected(network);
         }
@@ -393,7 +393,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             super.init();
             const networksAttr = this.getAttribute('networks', true);
             if (networksAttr)
-                this._networkList = (0, index_1.getNetworks)(networksAttr);
+                this._networkList = index_1.getNetworks(networksAttr);
             const selectedChainId = this.getAttribute('selectedChainId', true);
             if (selectedChainId)
                 this.setNetworkByChainId(selectedChainId);
@@ -418,7 +418,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
     };
     ScomNetworkPicker = __decorate([
         components_3.customModule,
-        (0, components_3.customElements)('i-scom-network-picker')
+        components_3.customElements('i-scom-network-picker')
     ], ScomNetworkPicker);
     exports.default = ScomNetworkPicker;
 });
