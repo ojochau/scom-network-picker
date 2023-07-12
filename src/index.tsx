@@ -82,6 +82,7 @@ export default class ScomNetworkPicker extends Module {
 
   set networks(value: INetworkConfig[]) {
     this._networkList = getNetworks(value);
+    if (this._type) this.renderNetworks();
   }
 
   setNetworkByChainId(chainId: number) {
@@ -154,6 +155,7 @@ export default class ScomNetworkPicker extends Module {
   // }
 
   private renderNetworks() {
+    if (!this.gridNetworkGroup) return;
     this.gridNetworkGroup.clearInnerHTML()
     this.networkMapper = new Map()
     this.gridNetworkGroup.append(
@@ -258,6 +260,7 @@ export default class ScomNetworkPicker extends Module {
   }
 
   private async renderUI() {
+    if (!this.pnlNetwork) this.pnlNetwork = new Panel();
     this.pnlNetwork.clearInnerHTML()
     if (this._type === 'combobox') await this.renderCombobox()
     else await this.renderButton()
@@ -331,10 +334,9 @@ export default class ScomNetworkPicker extends Module {
     this.classList.add(customStyles)
     super.init()
     const networksAttr = this.getAttribute('networks', true);
-    this._networkList = getNetworks(networksAttr);
+    if (networksAttr) this._networkList = getNetworks(networksAttr);
     const selectedChainId = this.getAttribute('selectedChainId', true);
-    if (selectedChainId)
-      this.setNetworkByChainId(selectedChainId);
+    if (selectedChainId) this.setNetworkByChainId(selectedChainId);
     this._switchNetworkOnSelect = this.getAttribute('switchNetworkOnSelect', true, false);
     this._onCustomNetworkSelected = this.getAttribute('onCustomNetworkSelected', true);
     this.type = this.getAttribute('type', true, 'button');
