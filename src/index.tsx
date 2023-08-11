@@ -55,6 +55,7 @@ export default class ScomNetworkPicker extends Module {
   private _switchNetworkOnSelect: boolean
   private networkPlaceholder = 'Select Network';
   private _onCustomNetworkSelected: (network: INetwork) => void;
+  public onChanged: (network: INetwork) => void;
 
   constructor(parent?: Container, options?: any) {
     super(parent, options)
@@ -140,6 +141,9 @@ export default class ScomNetworkPicker extends Module {
       await switchNetwork(network.chainId)
     this.setNetwork(network)
     this._onCustomNetworkSelected && this._onCustomNetworkSelected(network);
+    if (this.onChanged) {
+      this.onChanged(network);
+    }
   }
 
   // private updateConnectedLabel(isConnected: boolean) {
