@@ -62,6 +62,7 @@ declare module "@scom/scom-network-picker" {
         private _switchNetworkOnSelect;
         private networkPlaceholder;
         private _onCustomNetworkSelected;
+        onChanged: (network: INetwork) => void;
         constructor(parent?: Container, options?: any);
         get selectedNetwork(): INetwork;
         get type(): IType;

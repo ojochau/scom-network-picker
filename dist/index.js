@@ -269,6 +269,9 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 await (0, index_1.switchNetwork)(network.chainId);
             this.setNetwork(network);
             this._onCustomNetworkSelected && this._onCustomNetworkSelected(network);
+            if (this.onChanged) {
+                this.onChanged(network);
+            }
         }
         // private updateConnectedLabel(isConnected: boolean) {
         //   if (isConnected) {
