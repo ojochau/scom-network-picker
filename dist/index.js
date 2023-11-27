@@ -196,11 +196,11 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
         get type() {
             return this._type;
         }
-        set type(value) {
+        async setType(value) {
             if (value === this._type)
                 return;
             this._type = value;
-            this.renderUI();
+            await this.renderUI();
         }
         get networkList() {
             return this._networkList;
@@ -320,8 +320,9 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             }
         }
         async renderUI() {
-            if (!this.pnlNetwork)
+            if (!this.pnlNetwork) {
                 this.pnlNetwork = new components_3.Panel();
+            }
             this.pnlNetwork.clearInnerHTML();
             if (this._type === 'combobox')
                 await this.renderCombobox();
@@ -391,9 +392,10 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 this.btnNetwork.opacity = 0.5;
             };
         }
-        init() {
+        async init() {
             this.classList.add(index_css_1.default);
-            super.init();
+            await super.init();
+            // this.isReadyCallbackQueued = true;
             const networksAttr = this.getAttribute('networks', true);
             if (networksAttr)
                 this._networkList = (0, index_1.getNetworks)(networksAttr);
@@ -402,7 +404,10 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 this.setNetworkByChainId(selectedChainId);
             this._switchNetworkOnSelect = this.getAttribute('switchNetworkOnSelect', true, false);
             this._onCustomNetworkSelected = this.getAttribute('onCustomNetworkSelected', true);
-            this.type = this.getAttribute('type', true, 'button');
+            this._type = this.getAttribute('type', true, 'button');
+            // this.isReadyCallbackQueued = false;
+            // this.executeReadyCallback();
+            await this.renderUI();
             document.addEventListener('click', (event) => {
                 const target = event.target;
                 const btnNetwork = target.closest('.btn-network');

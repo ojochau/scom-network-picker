@@ -66,7 +66,7 @@ declare module "@scom/scom-network-picker" {
         constructor(parent?: Container, options?: any);
         get selectedNetwork(): INetwork;
         get type(): IType;
-        set type(value: IType);
+        setType(value: IType): Promise<void>;
         get networkList(): INetwork[];
         set networkList(value: INetwork[]);
         set networks(value: INetworkConfig[]);
@@ -81,7 +81,7 @@ declare module "@scom/scom-network-picker" {
         private renderUI;
         private renderButton;
         private renderCombobox;
-        init(): void;
+        init(): Promise<void>;
         render(): any;
     }
 }

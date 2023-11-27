@@ -68,10 +68,11 @@ export default class ScomNetworkPicker extends Module {
   get type(): IType {
     return this._type
   }
-  set type(value: IType) {
-    if (value === this._type) return
-    this._type = value
-    this.renderUI()
+
+  async setType(value: IType) {
+    if (value === this._type) return;
+    this._type = value;
+    await this.renderUI();
   }
 
   get networkList() {
@@ -264,8 +265,10 @@ export default class ScomNetworkPicker extends Module {
   }
 
   private async renderUI() {
-    if (!this.pnlNetwork) this.pnlNetwork = new Panel();
-    this.pnlNetwork.clearInnerHTML()
+    if (!this.pnlNetwork) {
+      this.pnlNetwork = new Panel();
+    }
+    this.pnlNetwork.clearInnerHTML();
     if (this._type === 'combobox') await this.renderCombobox()
     else await this.renderButton()
     this.mdNetwork.item = this.renderModalItem()
@@ -334,17 +337,17 @@ export default class ScomNetworkPicker extends Module {
     }
   }
 
-  init() {
+  async init() {
     this.classList.add(customStyles)
-    super.init()
+    await super.init();
     const networksAttr = this.getAttribute('networks', true);
     if (networksAttr) this._networkList = getNetworks(networksAttr);
     const selectedChainId = this.getAttribute('selectedChainId', true);
     if (selectedChainId) this.setNetworkByChainId(selectedChainId);
     this._switchNetworkOnSelect = this.getAttribute('switchNetworkOnSelect', true, false);
     this._onCustomNetworkSelected = this.getAttribute('onCustomNetworkSelected', true);
-    this.type = this.getAttribute('type', true, 'button');
-
+    this._type = this.getAttribute('type', true, 'button');
+    await this.renderUI();
     document.addEventListener('click', (event) => {
       const target = event.target as Control
       const btnNetwork = target.closest('.btn-network')
