@@ -56,9 +56,10 @@ export default class ScomNetworkPicker extends Module {
   private networkPlaceholder = 'Select Network';
   private _onCustomNetworkSelected: (network: INetwork) => void;
   public onChanged: (network: INetwork) => void;
-
+  
   constructor(parent?: Container, options?: any) {
     super(parent, options)
+    this.deferReadyCallback = true;
   }
 
   get selectedNetwork() {
@@ -271,7 +272,8 @@ export default class ScomNetworkPicker extends Module {
     this.pnlNetwork.clearInnerHTML();
     if (this._type === 'combobox') await this.renderCombobox()
     else await this.renderButton()
-    this.mdNetwork.item = this.renderModalItem()
+    this.mdNetwork.visible = false;
+    this.mdNetwork.item = this.renderModalItem();
     this.mdNetwork.classList.add('os-modal')
     this.btnNetwork.classList.add('btn-network')
     this.pnlNetwork.appendChild(this.btnNetwork)
@@ -357,6 +359,7 @@ export default class ScomNetworkPicker extends Module {
         this.btnNetwork.classList.add('btn-focus')
       }
     })
+    super.executeReadyCallback();
   }
   render() {
     return (

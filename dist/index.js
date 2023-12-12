@@ -24,13 +24,12 @@ define("@scom/scom-network-picker/store/index.ts", ["require", "exports", "@ijst
     }
     exports.isWalletConnected = isWalletConnected;
     async function switchNetwork(chainId) {
-        var _a;
         if (!isWalletConnected()) {
             components_1.application.EventBus.dispatch("chainChanged" /* EventId.chainChanged */, chainId);
             return;
         }
         const wallet = eth_wallet_1.Wallet.getClientInstance();
-        if (((_a = wallet === null || wallet === void 0 ? void 0 : wallet.clientSideProvider) === null || _a === void 0 ? void 0 : _a.name) === WalletPlugin.MetaMask) {
+        if (wallet?.clientSideProvider?.name === WalletPlugin.MetaMask) {
             await wallet.switchNetwork(chainId);
         }
     }
@@ -189,6 +188,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             super(parent, options);
             this._networkList = [];
             this.networkPlaceholder = 'Select Network';
+            this.deferReadyCallback = true;
         }
         get selectedNetwork() {
             return this._selectedNetwork;
@@ -229,14 +229,13 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             return this._networkList.find(net => net.chainId === chainId) || null;
         }
         getNetworkLabel() {
-            var _a, _b, _c;
             if (this._selectedNetwork) {
-                const img = ((_a = this._selectedNetwork) === null || _a === void 0 ? void 0 : _a.image) || undefined;
+                const img = this._selectedNetwork?.image || undefined;
                 return `<i-hstack verticalAlignment="center" gap="1.125rem">
         <i-panel>
           <i-image width=${17} height=${17} url="${img}"></i-image>
         </i-panel>
-        <i-label caption="${(_c = (_b = this._selectedNetwork) === null || _b === void 0 ? void 0 : _b.chainName) !== null && _c !== void 0 ? _c : ''}"></i-label>
+        <i-label caption="${this._selectedNetwork?.chainName ?? ''}"></i-label>
       </i-hstack>`;
             }
             else {
@@ -244,15 +243,13 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             }
         }
         setNetwork(network) {
-            var _a;
             this._selectedNetwork = network;
             if (this.btnNetwork) {
                 this.btnNetwork.caption = this.getNetworkLabel();
                 this.btnNetwork.opacity = 1;
             }
-            (_a = this.networkMapper) === null || _a === void 0 ? void 0 : _a.forEach((value, key) => {
-                var _a;
-                const chainId = (_a = this._selectedNetwork) === null || _a === void 0 ? void 0 : _a.chainId;
+            this.networkMapper?.forEach((value, key) => {
+                const chainId = this._selectedNetwork?.chainId;
                 if (key === chainId) {
                     value.classList.add('is-active');
                 }
@@ -328,6 +325,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 await this.renderCombobox();
             else
                 await this.renderButton();
+            this.mdNetwork.visible = false;
             this.mdNetwork.item = this.renderModalItem();
             this.mdNetwork.classList.add('os-modal');
             this.btnNetwork.classList.add('btn-network');
@@ -385,8 +383,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             this.btnNetwork.classList.add('btn-cb-network');
             this.mdNetwork.classList.add('box-shadow');
             this.mdNetwork.onClose = () => {
-                var _a;
-                this.btnNetwork.opacity = ((_a = this._selectedNetwork) === null || _a === void 0 ? void 0 : _a.chainId) ? 1 : 0.5;
+                this.btnNetwork.opacity = this._selectedNetwork?.chainId ? 1 : 0.5;
             };
             this.mdNetwork.onOpen = () => {
                 this.btnNetwork.opacity = 0.5;
@@ -395,7 +392,6 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
         async init() {
             this.classList.add(index_css_1.default);
             await super.init();
-            // this.isReadyCallbackQueued = true;
             const networksAttr = this.getAttribute('networks', true);
             if (networksAttr)
                 this._networkList = (0, index_1.getNetworks)(networksAttr);
@@ -405,8 +401,6 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             this._switchNetworkOnSelect = this.getAttribute('switchNetworkOnSelect', true, false);
             this._onCustomNetworkSelected = this.getAttribute('onCustomNetworkSelected', true);
             this._type = this.getAttribute('type', true, 'button');
-            // this.isReadyCallbackQueued = false;
-            // this.executeReadyCallback();
             await this.renderUI();
             document.addEventListener('click', (event) => {
                 const target = event.target;
@@ -418,6 +412,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                     this.btnNetwork.classList.add('btn-focus');
                 }
             });
+            super.executeReadyCallback();
         }
         render() {
             return (this.$render("i-panel", { width: '100%' },
