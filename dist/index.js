@@ -140,11 +140,11 @@ define("@scom/scom-network-picker/index.css.ts", ["require", "exports", "@ijstec
                             '&.is-combobox': {
                                 $nest: {
                                     '.is-active': {
-                                        background: Theme.action.active,
+                                        background: Theme.action.activeBackground,
                                         fontWeight: 600
                                     },
                                     '.list-item:not(.is-active):hover': {
-                                        background: Theme.action.hover
+                                        background: Theme.action.hoverBackground
                                     }
                                 }
                             }
@@ -231,11 +231,11 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
         getNetworkLabel() {
             if (this._selectedNetwork) {
                 const img = this._selectedNetwork?.image || undefined;
-                return `<i-hstack verticalAlignment="center" gap="1.125rem">
+                return `<i-hstack verticalAlignment="center" gap="0.5rem">
         <i-panel>
-          <i-image width=${17} height=${17} url="${img}"></i-image>
+          <i-image width=${24} height=${24} url="${img}"></i-image>
         </i-panel>
-        <i-label caption="${this._selectedNetwork?.chainName ?? ''}"></i-label>
+        <i-label caption="${this._selectedNetwork?.chainName ?? ''}" textOverflow="ellipsis"></i-label>
       </i-hstack>`;
             }
             else {
@@ -287,13 +287,12 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             this.gridNetworkGroup.clearInnerHTML();
             this.networkMapper = new Map();
             this.gridNetworkGroup.append(...this._networkList.map((network) => {
-                const img = network.image ? (this.$render("i-image", { url: network.image, width: this.type === 'button' ? 34 : 16, height: this.type === 'button' ? 34 : 16 })) : ([]);
+                const img = network.image ? (this.$render("i-image", { url: network.image, width: this.type === 'button' ? 34 : 24, height: this.type === 'button' ? 34 : 24 })) : ([]);
                 const isActive = this._selectedNetwork ? this._selectedNetwork.chainId === network.chainId : false;
                 const hsNetwork = (this.$render("i-hstack", { onClick: () => this.onNetworkSelected(network), background: { color: this.type === 'button' ? Theme.colors.secondary.light : 'transparent' }, border: { radius: this.type === 'button' ? 10 : '0px' }, position: 'relative', class: isActive ? 'is-active list-item' : 'list-item', verticalAlignment: "center", overflow: "hidden", padding: this.type === 'button' ? { top: '0.65rem', bottom: '0.65rem', left: '0.5rem', right: '0.5rem' } : { top: '5px', bottom: '5px', left: '0.75rem', right: '0.75rem' } },
-                    this.$render("i-hstack", { margin: { left: this.type === 'button' ? '1rem' : '0px' }, verticalAlignment: 'center', gap: this.type === 'button' ? '0.75rem' : '1.125rem', lineHeight: 1.375 },
+                    this.$render("i-hstack", { margin: { left: this.type === 'button' ? '1rem' : '0px' }, verticalAlignment: 'center', gap: this.type === 'button' ? '0.75rem' : '0.5rem', lineHeight: 1.375 },
                         this.$render("i-panel", null, img),
                         this.$render("i-label", { caption: network.chainName, wordBreak: 'break-word', font: {
-                                size: '.875rem',
                                 bold: this.type === 'button',
                                 color: this.type === 'button' ? Theme.colors.primary.dark : Theme.text.primary,
                                 weight: 400
@@ -358,7 +357,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             this.mdNetwork = await components_3.Modal.create({
                 showBackdrop: false,
                 minWidth: 200,
-                popupPlacement: 'bottom'
+                popupPlacement: 'bottomLeft'
             });
             this.mdNetwork.classList.add('full-width');
             this.btnNetwork = await components_3.Button.create({
