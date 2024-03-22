@@ -108,11 +108,11 @@ export default class ScomNetworkPicker extends Module {
   private getNetworkLabel() {
     if (this._selectedNetwork) {
       const img = this._selectedNetwork?.image || undefined
-      return `<i-hstack verticalAlignment="center" gap="1.125rem">
+      return `<i-hstack verticalAlignment="center" gap="0.5rem">
         <i-panel>
-          <i-image width=${17} height=${17} url="${img}"></i-image>
+          <i-image width=${24} height=${24} url="${img}"></i-image>
         </i-panel>
-        <i-label caption="${this._selectedNetwork?.chainName ?? ''}"></i-label>
+        <i-label caption="${this._selectedNetwork?.chainName ?? ''}" textOverflow="ellipsis"></i-label>
       </i-hstack>`
     } else {
       return this.type === 'button' ? 'Unsupported Network' : this.networkPlaceholder
@@ -169,8 +169,8 @@ export default class ScomNetworkPicker extends Module {
         const img = network.image ? (
           <i-image
             url={network.image}
-            width={this.type === 'button' ? 34 : 16}
-            height={this.type === 'button' ? 34 : 16}
+            width={this.type === 'button' ? 34 : 24}
+            height={this.type === 'button' ? 34 : 24}
           />
         ) : (
           []
@@ -190,7 +190,7 @@ export default class ScomNetworkPicker extends Module {
             <i-hstack
               margin={{ left: this.type === 'button' ? '1rem' : '0px' }}
               verticalAlignment='center'
-              gap={this.type === 'button' ? '0.75rem' : '1.125rem'}
+              gap={this.type === 'button' ? '0.75rem' : '0.5rem'}
               lineHeight={1.375}
             >
               <i-panel>{img}</i-panel>
@@ -198,7 +198,6 @@ export default class ScomNetworkPicker extends Module {
                 caption={network.chainName}
                 wordBreak='break-word'
                 font={{
-                  size: '.875rem',
                   bold: this.type === 'button',
                   color: this.type === 'button' ? Theme.colors.primary.dark : Theme.text.primary,
                   weight: 400
@@ -307,7 +306,7 @@ export default class ScomNetworkPicker extends Module {
     this.mdNetwork = await Modal.create({
       showBackdrop: false,
       minWidth: 200,
-      popupPlacement: 'bottom'
+      popupPlacement: 'bottomLeft'
     });
     this.mdNetwork.classList.add('full-width')
     this.btnNetwork = await Button.create({

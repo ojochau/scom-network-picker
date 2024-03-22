@@ -88,11 +88,11 @@ export default Styles.style({
             '&.is-combobox': {
               $nest: {
                 '.is-active': {
-                  background: Theme.action.active,
+                  background: Theme.action.activeBackground,
                   fontWeight: 600
                 },
                 '.list-item:not(.is-active):hover': {
-                  background: Theme.action.hover
+                  background: Theme.action.hoverBackground
                 }
               }
             }
