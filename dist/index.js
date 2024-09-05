@@ -95,7 +95,7 @@ define("@scom/scom-network-picker/index.css.ts", ["require", "exports", "@ijstec
                                         cursor: 'default',
                                         $nest: {
                                             '&:hover > *': {
-                                                opacity: '0.5 !important',
+                                                opacity: '0.75 !important',
                                             }
                                         }
                                     }
@@ -124,7 +124,7 @@ define("@scom/scom-network-picker/index.css.ts", ["require", "exports", "@ijstec
                                     '.list-item': {
                                         $nest: {
                                             '> *': {
-                                                opacity: .5
+                                                opacity: .75
                                             }
                                         }
                                     },
@@ -186,9 +186,15 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
     let ScomNetworkPicker = class ScomNetworkPicker extends components_3.Module {
         constructor(parent, options) {
             super(parent, options);
+            this._readOnly = false;
             this._networkList = [];
             this.networkPlaceholder = 'Select Network';
-            this.deferReadyCallback = true;
+        }
+        get readOnly() {
+            return this._readOnly;
+        }
+        set readOnly(value) {
+            this._readOnly = value;
         }
         get selectedNetwork() {
             return this._selectedNetwork;
@@ -260,7 +266,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
         }
         async onNetworkSelected(network) {
             this.mdNetwork.visible = false;
-            if (!network)
+            if (!network || this.readOnly)
                 return;
             if (this._switchNetworkOnSelect)
                 await (0, index_1.switchNetwork)(network.chainId);
@@ -349,6 +355,10 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 font: { color: Theme.colors.primary.contrastText },
                 caption: this.getNetworkLabel(),
                 onClick: () => {
+                    if (this.readOnly) {
+                        this.mdNetwork.visible = false;
+                        return;
+                    }
                     this.mdNetwork.visible = !this.mdNetwork.visible;
                 }
             });
@@ -375,6 +385,10 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 background: { color: 'transparent' },
                 caption: this.getNetworkLabel(),
                 onClick: () => {
+                    if (this.readOnly) {
+                        this.mdNetwork.visible = false;
+                        return;
+                    }
                     this.mdNetwork.visible = !this.mdNetwork.visible;
                     this.btnNetwork.classList.add('btn-focus');
                 }
@@ -382,10 +396,10 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             this.btnNetwork.classList.add('btn-cb-network');
             this.mdNetwork.classList.add('box-shadow');
             this.mdNetwork.onClose = () => {
-                this.btnNetwork.opacity = this._selectedNetwork?.chainId ? 1 : 0.5;
+                this.btnNetwork.opacity = 1;
             };
             this.mdNetwork.onOpen = () => {
-                this.btnNetwork.opacity = 0.5;
+                this.btnNetwork.opacity = 0.75;
             };
         }
         async init() {
@@ -399,6 +413,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 this.setNetworkByChainId(selectedChainId);
             this._switchNetworkOnSelect = this.getAttribute('switchNetworkOnSelect', true, false);
             this._onCustomNetworkSelected = this.getAttribute('onCustomNetworkSelected', true);
+            this._readOnly = this.getAttribute('readOnly', true, false);
             this._type = this.getAttribute('type', true, 'button');
             await this.renderUI();
             document.addEventListener('click', (event) => {
@@ -407,11 +422,10 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 if (!btnNetwork || !btnNetwork.isSameNode(this.btnNetwork)) {
                     this.btnNetwork.classList.remove('btn-focus');
                 }
-                else {
+                else if (!this.readOnly) {
                     this.btnNetwork.classList.add('btn-focus');
                 }
             });
-            super.executeReadyCallback();
         }
         render() {
             return (this.$render("i-panel", { width: '100%' },
