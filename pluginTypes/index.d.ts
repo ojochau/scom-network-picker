@@ -37,6 +37,7 @@ declare module "@scom/scom-network-picker" {
     import { INetwork } from '@ijstech/eth-wallet';
     type IType = 'button' | 'combobox';
     interface PickerElement extends ControlElement {
+        readOnly?: boolean;
         type?: IType;
         networks?: INetworkConfig[] | '*';
         selectedChainId?: number;
@@ -55,6 +56,7 @@ declare module "@scom/scom-network-picker" {
         private gridNetworkGroup;
         private pnlNetwork;
         private btnNetwork;
+        private _readOnly;
         private _type;
         private networkMapper;
         private _networkList;
@@ -64,6 +66,8 @@ declare module "@scom/scom-network-picker" {
         private _onCustomNetworkSelected;
         onChanged: (network: INetwork) => void;
         constructor(parent?: Container, options?: any);
+        get readOnly(): boolean;
+        set readOnly(value: boolean);
         get selectedNetwork(): INetwork;
         get type(): IType;
         setType(value: IType): Promise<void>;

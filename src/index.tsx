@@ -12,20 +12,20 @@ import {
   Container,
   Control
 } from '@ijstech/components'
-import {} from '@ijstech/eth-contract'
 import {
   INetworkConfig,
   getNetworks,
   switchNetwork,
 } from './store/index'
-export {INetworkConfig};
+export { INetworkConfig };
 import customStyles from './index.css'
 import { INetwork } from '@ijstech/eth-wallet'
 
 type IType = 'button' | 'combobox'
 interface PickerElement extends ControlElement {
-  type?: IType
-  networks?: INetworkConfig[] | '*'
+  readOnly?: boolean;
+  type?: IType;
+  networks?: INetworkConfig[] | '*';
   selectedChainId?: number;
   switchNetworkOnSelect?: boolean;
   onCustomNetworkSelected?: (network: INetwork) => void;
@@ -48,6 +48,7 @@ export default class ScomNetworkPicker extends Module {
   private pnlNetwork: Panel
   private btnNetwork: Button
 
+  private _readOnly: boolean = false
   private _type: IType
   private networkMapper: Map<number, HStack>
   private _networkList: INetwork[] = []
@@ -56,10 +57,17 @@ export default class ScomNetworkPicker extends Module {
   private networkPlaceholder = 'Select Network';
   private _onCustomNetworkSelected: (network: INetwork) => void;
   public onChanged: (network: INetwork) => void;
-  
+
   constructor(parent?: Container, options?: any) {
     super(parent, options)
-    this.deferReadyCallback = true;
+  }
+
+  get readOnly() {
+    return this._readOnly;
+  }
+
+  set readOnly(value: boolean) {
+    this._readOnly = value;
   }
 
   get selectedNetwork() {
@@ -93,7 +101,7 @@ export default class ScomNetworkPicker extends Module {
     if (network) this.setNetwork(network)
   }
 
-  clearNetwork(){
+  clearNetwork() {
     this._selectedNetwork = undefined
     this.btnNetwork.caption = this.networkPlaceholder
     this.networkMapper.forEach((value, key) => {
@@ -138,7 +146,7 @@ export default class ScomNetworkPicker extends Module {
 
   private async onNetworkSelected(network: INetwork) {
     this.mdNetwork.visible = false
-    if (!network) return
+    if (!network || this.readOnly) return
     if (this._switchNetworkOnSelect)
       await switchNetwork(network.chainId)
     this.setNetwork(network)
@@ -185,7 +193,7 @@ export default class ScomNetworkPicker extends Module {
             class={isActive ? 'is-active list-item' : 'list-item'}
             verticalAlignment="center"
             overflow="hidden"
-            padding={this.type === 'button' ? {top: '0.65rem', bottom: '0.65rem', left: '0.5rem', right: '0.5rem'} : {top: '5px', bottom: '5px', left: '0.75rem', right: '0.75rem'}}
+            padding={this.type === 'button' ? { top: '0.65rem', bottom: '0.65rem', left: '0.5rem', right: '0.5rem' } : { top: '5px', bottom: '5px', left: '0.75rem', right: '0.75rem' }}
           >
             <i-hstack
               margin={{ left: this.type === 'button' ? '1rem' : '0px' }}
@@ -228,11 +236,11 @@ export default class ScomNetworkPicker extends Module {
       return (
         <i-vstack
           height="100%"
-          padding={{left: '1rem', right: '1rem', bottom: '2rem', top: '0.5rem'}}
+          padding={{ left: '1rem', right: '1rem', bottom: '2rem', top: '0.5rem' }}
           lineHeight={1.5} gap="1rem"
         >
           <i-hstack horizontalAlignment="space-between" class="i-modal_header">
-            <i-label caption="Supported Network" font={{color: Theme.colors.primary.main, size: '1rem'}}></i-label>
+            <i-label caption="Supported Network" font={{ color: Theme.colors.primary.main, size: '1rem' }}></i-label>
             <i-icon name="times" width={16} height={16} fill={Theme.colors.primary.main} onClick={() => this.mdNetwork.visible = false}></i-icon>
           </i-hstack>
           <i-label
@@ -252,11 +260,11 @@ export default class ScomNetworkPicker extends Module {
     } else {
       return (
         <i-panel
-          margin={{top: '0.25rem'}}
-          padding={{top: 5, bottom: 5}}
+          margin={{ top: '0.25rem' }}
+          padding={{ top: 5, bottom: 5 }}
           overflow={{ y: 'auto' }}
           maxHeight={300}
-          border={{radius: 2}}
+          border={{ radius: 2 }}
         >
           {grid}
         </i-panel>
@@ -297,6 +305,10 @@ export default class ScomNetworkPicker extends Module {
       font: { color: Theme.colors.primary.contrastText },
       caption: this.getNetworkLabel(),
       onClick: () => {
+        if (this.readOnly) {
+          this.mdNetwork.visible = false;
+          return;
+        }
         this.mdNetwork.visible = !this.mdNetwork.visible
       }
     })
@@ -324,6 +336,10 @@ export default class ScomNetworkPicker extends Module {
       background: { color: 'transparent' },
       caption: this.getNetworkLabel(),
       onClick: () => {
+        if (this.readOnly) {
+          this.mdNetwork.visible = false;
+          return;
+        }
         this.mdNetwork.visible = !this.mdNetwork.visible
         this.btnNetwork.classList.add('btn-focus')
       }
@@ -331,10 +347,10 @@ export default class ScomNetworkPicker extends Module {
     this.btnNetwork.classList.add('btn-cb-network')
     this.mdNetwork.classList.add('box-shadow')
     this.mdNetwork.onClose = () => {
-      this.btnNetwork.opacity = this._selectedNetwork?.chainId ? 1 : 0.5
+      this.btnNetwork.opacity = 1
     }
     this.mdNetwork.onOpen = () => {
-      this.btnNetwork.opacity = 0.5
+      this.btnNetwork.opacity = 0.75
     }
   }
 
@@ -347,6 +363,7 @@ export default class ScomNetworkPicker extends Module {
     if (selectedChainId) this.setNetworkByChainId(selectedChainId);
     this._switchNetworkOnSelect = this.getAttribute('switchNetworkOnSelect', true, false);
     this._onCustomNetworkSelected = this.getAttribute('onCustomNetworkSelected', true);
+    this._readOnly = this.getAttribute('readOnly', true, false);
     this._type = this.getAttribute('type', true, 'button');
     await this.renderUI();
     document.addEventListener('click', (event) => {
@@ -354,11 +371,10 @@ export default class ScomNetworkPicker extends Module {
       const btnNetwork = target.closest('.btn-network')
       if (!btnNetwork || !btnNetwork.isSameNode(this.btnNetwork)) {
         this.btnNetwork.classList.remove('btn-focus')
-      } else {
+      } else if (!this.readOnly) {
         this.btnNetwork.classList.add('btn-focus')
       }
     })
-    super.executeReadyCallback();
   }
   render() {
     return (

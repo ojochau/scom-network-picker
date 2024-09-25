@@ -43,7 +43,7 @@ export default Styles.style({
                   cursor: 'default',
                   $nest: {
                     '&:hover > *': {
-                      opacity: '0.5 !important',
+                      opacity: '0.75 !important',
                     }
                   }
                 }
@@ -72,7 +72,7 @@ export default Styles.style({
                 '.list-item': {
                   $nest: {
                     '> *': {
-                      opacity: .5
+                      opacity: .75
                     }
                   }
                 },
