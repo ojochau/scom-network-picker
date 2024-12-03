@@ -38,15 +38,20 @@ declare module "@scom/scom-network-picker/translations.json.ts" {
     const _default_1: {
         en: {
             select_network: string;
-            unsupported_network: string;
             supported_network: string;
+            unsupported_network: string;
             we_support_the_following_networks_please_click_to_connect: string;
         };
-        "zh-hant": {};
+        "zh-hant": {
+            select_network: string;
+            supported_network: string;
+            unsupported_network: string;
+            we_support_the_following_networks_please_click_to_connect: string;
+        };
         vi: {
             select_network: string;
-            unsupported_network: string;
             supported_network: string;
+            unsupported_network: string;
             we_support_the_following_networks_please_click_to_connect: string;
         };
     };
