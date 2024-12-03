@@ -28,6 +28,29 @@ declare module "@scom/scom-network-picker/store/index.ts" {
 declare module "@scom/scom-network-picker/index.css.ts" {
     const _default: string;
     export default _default;
+    export const buttonStyles: string;
+    export const focusStyles: string;
+    export const modalStyles: string;
+    export const fullWidthStyles: string;
+}
+/// <amd-module name="@scom/scom-network-picker/translations.json.ts" />
+declare module "@scom/scom-network-picker/translations.json.ts" {
+    const _default_1: {
+        en: {
+            select_network: string;
+            unsupported_network: string;
+            supported_network: string;
+            we_support_the_following_networks_please_click_to_connect: string;
+        };
+        "zh-hant": {};
+        vi: {
+            select_network: string;
+            unsupported_network: string;
+            supported_network: string;
+            we_support_the_following_networks_please_click_to_connect: string;
+        };
+    };
+    export default _default_1;
 }
 /// <amd-module name="@scom/scom-network-picker" />
 declare module "@scom/scom-network-picker" {
