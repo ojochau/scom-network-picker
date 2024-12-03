@@ -52,6 +52,7 @@ define("@scom/scom-network-picker/store/index.ts", ["require", "exports", "@ijst
 define("@scom/scom-network-picker/index.css.ts", ["require", "exports", "@ijstech/components"], function (require, exports, components_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.fullWidthStyles = exports.modalStyles = exports.focusStyles = exports.buttonStyles = void 0;
     const Theme = components_2.Styles.Theme.ThemeVars;
     exports.default = components_2.Styles.style({
         $nest: {
@@ -67,119 +68,127 @@ define("@scom/scom-network-picker/index.css.ts", ["require", "exports", "@ijstec
             '::-webkit-scrollbar-thumb': {
                 borderRadius: '12px',
                 background: 'rgba(0, 0, 0, 0.5) 0% 0% no-repeat padding-box'
+            }
+        }
+    });
+    exports.buttonStyles = components_2.Styles.style({
+        justifyContent: "space-between",
+        $nest: {
+            '&:hover': {
+                border: `1px solid ${Theme.colors.primary.main}`
+            }
+        }
+    });
+    exports.focusStyles = components_2.Styles.style({
+        border: `1px solid ${Theme.colors.primary.main}`,
+        boxShadow: '0 0 0 2px rgba(87, 75, 144, .2)'
+    });
+    exports.modalStyles = components_2.Styles.style({
+        boxSizing: 'border-box',
+        $nest: {
+            '.i-modal_header': {
+                borderRadius: '10px 10px 0 0',
+                background: 'unset',
+                borderBottom: `2px solid ${Theme.divider}`,
+                padding: '1rem 0',
+                fontWeight: 700,
+                fontSize: '1rem'
             },
-            '.btn-network': {
-                boxShadow: 'none'
-            },
-            '.os-modal': {
-                boxSizing: 'border-box',
+            '.list-view': {
                 $nest: {
-                    '.i-modal_header': {
-                        borderRadius: '10px 10px 0 0',
-                        background: 'unset',
-                        borderBottom: `2px solid ${Theme.divider}`,
-                        padding: '1rem 0',
-                        fontWeight: 700,
-                        fontSize: '1rem'
-                    },
-                    '.modal': {
-                        padding: 0
-                    },
-                    '.list-view': {
+                    '.list-item': {
+                        cursor: 'pointer',
+                        transition: 'all .3s ease-in',
                         $nest: {
-                            '.list-item': {
-                                cursor: 'pointer',
-                                transition: 'all .3s ease-in',
+                            '&.disabled': {
+                                cursor: 'default',
                                 $nest: {
-                                    '&.disabled': {
-                                        cursor: 'default',
-                                        $nest: {
-                                            '&:hover > *': {
-                                                opacity: '0.75 !important',
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            '&.is-button': {
-                                $nest: {
-                                    '.is-active': {
-                                        $nest: {
-                                            '> *': {
-                                                opacity: 1
-                                            },
-                                            '&:after': {
-                                                content: "''",
-                                                top: '50%',
-                                                left: 12,
-                                                position: 'absolute',
-                                                background: '#20bf55',
-                                                borderRadius: '50%',
-                                                width: 10,
-                                                height: 10,
-                                                transform: 'translate3d(-50%,-50%,0)'
-                                            }
-                                        }
-                                    },
-                                    '.list-item': {
-                                        $nest: {
-                                            '> *': {
-                                                opacity: .75
-                                            }
-                                        }
-                                    },
-                                    '.list-item:not(.is-active):hover': {
-                                        $nest: {
-                                            '> *': {
-                                                opacity: 1
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            '&.is-combobox': {
-                                $nest: {
-                                    '.is-active': {
-                                        background: Theme.action.activeBackground,
-                                        fontWeight: 600
-                                    },
-                                    '.list-item:not(.is-active):hover': {
-                                        background: Theme.action.hoverBackground
+                                    '&:hover > *': {
+                                        opacity: '0.75 !important',
                                     }
                                 }
                             }
                         }
                     },
-                    '&> div': {
-                        transform: 'scale(1)'
+                    '&.is-button': {
+                        $nest: {
+                            '.is-active': {
+                                $nest: {
+                                    '> *': {
+                                        opacity: 1
+                                    },
+                                    '&:after': {
+                                        content: "''",
+                                        top: '50%',
+                                        left: 12,
+                                        position: 'absolute',
+                                        background: Theme.colors.success.main,
+                                        borderRadius: '50%',
+                                        width: 10,
+                                        height: 10,
+                                        transform: 'translate3d(-50%,-50%,0)'
+                                    }
+                                }
+                            },
+                            '.list-item': {
+                                $nest: {
+                                    '> *': {
+                                        opacity: .75
+                                    }
+                                }
+                            },
+                            '.list-item:not(.is-active):hover': {
+                                $nest: {
+                                    '> *': {
+                                        opacity: 1
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    '&.is-combobox': {
+                        $nest: {
+                            '.is-active': {
+                                background: Theme.action.activeBackground,
+                                fontWeight: 600
+                            },
+                            '.list-item:not(.is-active):hover': {
+                                background: Theme.action.hoverBackground
+                            }
+                        }
                     }
                 }
             },
-            '.box-shadow > div': {
-                boxShadow: '0 3px 6px -4px rgba(0,0,0,.12), 0 6px 16px 0 rgba(0,0,0,.08), 0 9px 28px 8px rgba(0,0,0,.05)'
-            },
-            '.is-ellipsis': {
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
-            },
-            '.btn-cb-network': {
-                justifyContent: "space-between"
-            },
-            '.btn-cb-network:hover': {
-                border: `1px solid ${Theme.colors.primary.main}`
-            },
-            '.btn-focus': {
-                border: `1px solid ${Theme.colors.primary.main}`,
-                boxShadow: '0 0 0 2px rgba(87, 75, 144, .2)'
-            },
-            '.full-width': {
-                width: '100%'
+            '&> div': {
+                transform: 'scale(1)'
             }
         }
     });
+    exports.fullWidthStyles = components_2.Styles.style({
+        width: '100%'
+    });
 });
-define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components", "@scom/scom-network-picker/store/index.ts", "@scom/scom-network-picker/index.css.ts"], function (require, exports, components_3, index_1, index_css_1) {
+define("@scom/scom-network-picker/translations.json.ts", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    ///<amd-module name='@scom/scom-network-picker/translations.json.ts'/> 
+    exports.default = {
+        "en": {
+            "select_network": "Select Network",
+            "unsupported_network": "Unsupported Network",
+            "supported_network": "Supported Network",
+            "we_support_the_following_networks_please_click_to_connect": "We support the following networks, please click to connect."
+        },
+        "zh-hant": {},
+        "vi": {
+            "select_network": "Chọn Mạng",
+            "unsupported_network": "Mạng không được hỗ trợ",
+            "supported_network": "Mạng được hỗ trợ",
+            "we_support_the_following_networks_please_click_to_connect": "Chúng tôi hỗ trợ các mạng sau, vui lòng nhấp vào để kết nối."
+        }
+    };
+});
+define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components", "@scom/scom-network-picker/store/index.ts", "@scom/scom-network-picker/index.css.ts", "@scom/scom-network-picker/translations.json.ts"], function (require, exports, components_3, index_1, index_css_1, translations_json_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     const Theme = components_3.Styles.Theme.ThemeVars;
@@ -188,7 +197,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             super(parent, options);
             this._readOnly = false;
             this._networkList = [];
-            this.networkPlaceholder = 'Select Network';
+            this.networkPlaceholder = '$select_network';
         }
         get readOnly() {
             return this._readOnly;
@@ -245,7 +254,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
       </i-hstack>`;
             }
             else {
-                return this.type === 'button' ? 'Unsupported Network' : this.networkPlaceholder;
+                return this.type === 'button' ? '$unsupported_network' : this.networkPlaceholder;
             }
         }
         setNetwork(network) {
@@ -276,17 +285,6 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 this.onChanged(network);
             }
         }
-        // private updateConnectedLabel(isConnected: boolean) {
-        //   if (isConnected) {
-        //     this.lbConnected.caption = 'Connected'
-        //     this.lbConnected.font = {color: Theme.colors.success.main, weight: 500, size: '13px'}
-        //     this.lbConnected.background = {color: Theme.colors.success.light}
-        //   } else {
-        //     this.lbConnected.caption = 'Not Connected'
-        //     this.lbConnected.font = {color: Theme.colors.error.main, weight: 500, size: '13px'}
-        //     this.lbConnected.background = {color: Theme.colors.error.light}
-        //   }
-        // }
         renderNetworks() {
             if (!this.gridNetworkGroup)
                 return;
@@ -302,7 +300,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                                 bold: this.type === 'button',
                                 color: this.type === 'button' ? Theme.colors.primary.dark : Theme.text.primary,
                                 weight: 400
-                            }, class: "is-ellipsis" }))));
+                            }, textOverflow: 'ellipsis' }))));
                 this.networkMapper.set(network.chainId, hsNetwork);
                 return hsNetwork;
             }));
@@ -312,9 +310,9 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             if (this.type === 'button') {
                 return (this.$render("i-vstack", { height: "100%", padding: { left: '1rem', right: '1rem', bottom: '2rem', top: '0.5rem' }, lineHeight: 1.5, gap: "1rem" },
                     this.$render("i-hstack", { horizontalAlignment: "space-between", class: "i-modal_header" },
-                        this.$render("i-label", { caption: "Supported Network", font: { color: Theme.colors.primary.main, size: '1rem' } }),
+                        this.$render("i-label", { caption: "$supported_network", font: { color: Theme.colors.primary.main, size: '1rem' } }),
                         this.$render("i-icon", { name: "times", width: 16, height: 16, fill: Theme.colors.primary.main, onClick: () => this.mdNetwork.visible = false })),
-                    this.$render("i-label", { id: 'lblNetworkDesc', font: { size: '.875rem' }, wordBreak: 'break-word', caption: 'We support the following networks, please click to connect.' }),
+                    this.$render("i-label", { id: 'lblNetworkDesc', font: { size: '.875rem' }, wordBreak: 'break-word', caption: '$we_support_the_following_networks_please_click_to_connect' }),
                     this.$render("i-panel", { height: 'calc(100% - 160px)', overflow: { y: 'auto' } }, grid)));
             }
             else {
@@ -332,8 +330,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 await this.renderButton();
             this.mdNetwork.visible = false;
             this.mdNetwork.item = this.renderModalItem();
-            this.mdNetwork.classList.add('os-modal');
-            this.btnNetwork.classList.add('btn-network');
+            this.mdNetwork.classList.add(index_css_1.modalStyles);
             this.pnlNetwork.appendChild(this.btnNetwork);
             this.pnlNetwork.appendChild(this.mdNetwork);
             this.renderNetworks();
@@ -341,7 +338,8 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
         async renderButton() {
             this.mdNetwork = await components_3.Modal.create({
                 width: 440,
-                border: { radius: 10 }
+                border: { radius: 10 },
+                padding: { top: 0, bottom: 0, left: 0, right: 0 }
             });
             this.btnNetwork = await components_3.Button.create({
                 height: 40,
@@ -354,6 +352,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 border: { radius: 5 },
                 font: { color: Theme.colors.primary.contrastText },
                 caption: this.getNetworkLabel(),
+                boxShadow: 'none',
                 onClick: () => {
                     if (this.readOnly) {
                         this.mdNetwork.visible = false;
@@ -362,14 +361,17 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                     this.mdNetwork.visible = !this.mdNetwork.visible;
                 }
             });
+            this.btnNetwork.id = 'btnNetwork';
         }
         async renderCombobox() {
             this.mdNetwork = await components_3.Modal.create({
                 showBackdrop: false,
                 minWidth: 200,
-                popupPlacement: 'bottomLeft'
+                width: '100%',
+                popupPlacement: 'bottomLeft',
+                boxShadow: '0 3px 6px -4px rgba(0,0,0,.12), 0 6px 16px 0 rgba(0,0,0,.08), 0 9px 28px 8px rgba(0,0,0,.05)'
             });
-            this.mdNetwork.classList.add('full-width');
+            this.mdNetwork.classList.add(index_css_1.fullWidthStyles);
             this.btnNetwork = await components_3.Button.create({
                 lineHeight: 1.875,
                 width: '100%',
@@ -384,17 +386,16 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 rightIcon: { name: 'angle-down', width: 20, height: 20, fill: Theme.text.primary },
                 background: { color: 'transparent' },
                 caption: this.getNetworkLabel(),
+                class: index_css_1.buttonStyles,
                 onClick: () => {
                     if (this.readOnly) {
                         this.mdNetwork.visible = false;
                         return;
                     }
                     this.mdNetwork.visible = !this.mdNetwork.visible;
-                    this.btnNetwork.classList.add('btn-focus');
+                    this.btnNetwork.classList.add(index_css_1.focusStyles);
                 }
             });
-            this.btnNetwork.classList.add('btn-cb-network');
-            this.mdNetwork.classList.add('box-shadow');
             this.mdNetwork.onClose = () => {
                 this.btnNetwork.opacity = 1;
             };
@@ -403,6 +404,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             };
         }
         async init() {
+            this.i18n.init({ ...translations_json_1.default });
             this.classList.add(index_css_1.default);
             await super.init();
             const networksAttr = this.getAttribute('networks', true);
@@ -418,18 +420,17 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             await this.renderUI();
             document.addEventListener('click', (event) => {
                 const target = event.target;
-                const btnNetwork = target.closest('.btn-network');
+                const btnNetwork = target.closest('#btnNetwork');
                 if (!btnNetwork || !btnNetwork.isSameNode(this.btnNetwork)) {
-                    this.btnNetwork.classList.remove('btn-focus');
+                    this.btnNetwork.classList.remove(index_css_1.focusStyles);
                 }
                 else if (!this.readOnly) {
-                    this.btnNetwork.classList.add('btn-focus');
+                    this.btnNetwork.classList.add(index_css_1.focusStyles);
                 }
             });
         }
         render() {
-            return (this.$render("i-panel", { width: '100%' },
-                this.$render("i-panel", { id: 'pnlNetwork', width: '100%' })));
+            return (this.$render("i-panel", { id: 'pnlNetwork', width: '100%' }));
         }
     };
     ScomNetworkPicker = __decorate([

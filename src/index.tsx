@@ -18,8 +18,9 @@ import {
   switchNetwork,
 } from './store/index'
 export { INetworkConfig };
-import customStyles from './index.css'
+import customStyles, { buttonStyles, focusStyles, fullWidthStyles, modalStyles } from './index.css'
 import { INetwork } from '@ijstech/eth-wallet'
+import translations from './translations.json';
 
 type IType = 'button' | 'combobox'
 interface PickerElement extends ControlElement {
@@ -54,7 +55,7 @@ export default class ScomNetworkPicker extends Module {
   private _networkList: INetwork[] = []
   private _selectedNetwork: INetwork | undefined
   private _switchNetworkOnSelect: boolean
-  private networkPlaceholder = 'Select Network';
+  private networkPlaceholder = '$select_network'
   private _onCustomNetworkSelected: (network: INetwork) => void;
   public onChanged: (network: INetwork) => void;
 
@@ -123,7 +124,7 @@ export default class ScomNetworkPicker extends Module {
         <i-label caption="${this._selectedNetwork?.chainName ?? ''}" textOverflow="ellipsis"></i-label>
       </i-hstack>`
     } else {
-      return this.type === 'button' ? 'Unsupported Network' : this.networkPlaceholder
+      return this.type === 'button' ? '$unsupported_network' : this.networkPlaceholder
     }
   }
 
@@ -155,18 +156,6 @@ export default class ScomNetworkPicker extends Module {
       this.onChanged(network);
     }
   }
-
-  // private updateConnectedLabel(isConnected: boolean) {
-  //   if (isConnected) {
-  //     this.lbConnected.caption = 'Connected'
-  //     this.lbConnected.font = {color: Theme.colors.success.main, weight: 500, size: '13px'}
-  //     this.lbConnected.background = {color: Theme.colors.success.light}
-  //   } else {
-  //     this.lbConnected.caption = 'Not Connected'
-  //     this.lbConnected.font = {color: Theme.colors.error.main, weight: 500, size: '13px'}
-  //     this.lbConnected.background = {color: Theme.colors.error.light}
-  //   }
-  // }
 
   private renderNetworks() {
     if (!this.gridNetworkGroup) return;
@@ -210,7 +199,7 @@ export default class ScomNetworkPicker extends Module {
                   color: this.type === 'button' ? Theme.colors.primary.dark : Theme.text.primary,
                   weight: 400
                 }}
-                class="is-ellipsis"
+                textOverflow='ellipsis'
               />
             </i-hstack>
           </i-hstack>
@@ -240,14 +229,14 @@ export default class ScomNetworkPicker extends Module {
           lineHeight={1.5} gap="1rem"
         >
           <i-hstack horizontalAlignment="space-between" class="i-modal_header">
-            <i-label caption="Supported Network" font={{ color: Theme.colors.primary.main, size: '1rem' }}></i-label>
+            <i-label caption="$supported_network" font={{ color: Theme.colors.primary.main, size: '1rem' }}></i-label>
             <i-icon name="times" width={16} height={16} fill={Theme.colors.primary.main} onClick={() => this.mdNetwork.visible = false}></i-icon>
           </i-hstack>
           <i-label
             id='lblNetworkDesc'
             font={{ size: '.875rem' }}
             wordBreak='break-word'
-            caption='We support the following networks, please click to connect.'
+            caption='$we_support_the_following_networks_please_click_to_connect'
           ></i-label>
           <i-panel
             height={'calc(100% - 160px)'}
@@ -281,8 +270,7 @@ export default class ScomNetworkPicker extends Module {
     else await this.renderButton()
     this.mdNetwork.visible = false;
     this.mdNetwork.item = this.renderModalItem();
-    this.mdNetwork.classList.add('os-modal')
-    this.btnNetwork.classList.add('btn-network')
+    this.mdNetwork.classList.add(modalStyles)
     this.pnlNetwork.appendChild(this.btnNetwork)
     this.pnlNetwork.appendChild(this.mdNetwork)
     this.renderNetworks()
@@ -291,7 +279,8 @@ export default class ScomNetworkPicker extends Module {
   private async renderButton() {
     this.mdNetwork = await Modal.create({
       width: 440,
-      border: { radius: 10 }
+      border: { radius: 10 },
+      padding: { top: 0, bottom: 0, left: 0, right: 0 }
     });
     this.btnNetwork = await Button.create({
       height: 40,
@@ -304,6 +293,7 @@ export default class ScomNetworkPicker extends Module {
       border: { radius: 5 },
       font: { color: Theme.colors.primary.contrastText },
       caption: this.getNetworkLabel(),
+      boxShadow: 'none',
       onClick: () => {
         if (this.readOnly) {
           this.mdNetwork.visible = false;
@@ -312,15 +302,18 @@ export default class ScomNetworkPicker extends Module {
         this.mdNetwork.visible = !this.mdNetwork.visible
       }
     })
+    this.btnNetwork.id = 'btnNetwork'
   }
 
   private async renderCombobox() {
     this.mdNetwork = await Modal.create({
       showBackdrop: false,
       minWidth: 200,
-      popupPlacement: 'bottomLeft'
+      width: '100%',
+      popupPlacement: 'bottomLeft',
+      boxShadow: '0 3px 6px -4px rgba(0,0,0,.12), 0 6px 16px 0 rgba(0,0,0,.08), 0 9px 28px 8px rgba(0,0,0,.05)'
     });
-    this.mdNetwork.classList.add('full-width')
+    this.mdNetwork.classList.add(fullWidthStyles)
     this.btnNetwork = await Button.create({
       lineHeight: 1.875,
       width: '100%',
@@ -335,17 +328,16 @@ export default class ScomNetworkPicker extends Module {
       rightIcon: { name: 'angle-down', width: 20, height: 20, fill: Theme.text.primary },
       background: { color: 'transparent' },
       caption: this.getNetworkLabel(),
+      class: buttonStyles,
       onClick: () => {
         if (this.readOnly) {
           this.mdNetwork.visible = false;
           return;
         }
         this.mdNetwork.visible = !this.mdNetwork.visible
-        this.btnNetwork.classList.add('btn-focus')
+        this.btnNetwork.classList.add(focusStyles)
       }
     })
-    this.btnNetwork.classList.add('btn-cb-network')
-    this.mdNetwork.classList.add('box-shadow')
     this.mdNetwork.onClose = () => {
       this.btnNetwork.opacity = 1
     }
@@ -355,6 +347,7 @@ export default class ScomNetworkPicker extends Module {
   }
 
   async init() {
+    this.i18n.init({...translations})
     this.classList.add(customStyles)
     await super.init();
     const networksAttr = this.getAttribute('networks', true);
@@ -368,36 +361,17 @@ export default class ScomNetworkPicker extends Module {
     await this.renderUI();
     document.addEventListener('click', (event) => {
       const target = event.target as Control
-      const btnNetwork = target.closest('.btn-network')
+      const btnNetwork = target.closest('#btnNetwork')
       if (!btnNetwork || !btnNetwork.isSameNode(this.btnNetwork)) {
-        this.btnNetwork.classList.remove('btn-focus')
+        this.btnNetwork.classList.remove(focusStyles)
       } else if (!this.readOnly) {
-        this.btnNetwork.classList.add('btn-focus')
+        this.btnNetwork.classList.add(focusStyles)
       }
     })
   }
   render() {
     return (
-      <i-panel width='100%'>
-        {/* <i-hstack
-          id="pnlStatus"
-          verticalAlignment='center'
-          horizontalAlignment='space-between'
-          visible={false}
-          margin={{bottom: '0.5rem'}}
-          width='100%'
-        >
-          <i-label caption='Network'></i-label>
-          <i-label
-            id="lbConnected"
-            caption='Not Connected'
-            padding={{left: 5, right: 5, top: 2, bottom: 2}}
-            border={{radius: 6}}
-            lineHeight={1.5715}
-          ></i-label>
-        </i-hstack> */}
-        <i-panel id='pnlNetwork' width='100%'></i-panel>
-      </i-panel>
+      <i-panel id='pnlNetwork' width='100%'></i-panel>
     )
   }
 }
