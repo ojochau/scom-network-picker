@@ -76,6 +76,11 @@ define("@scom/scom-network-picker/index.css.ts", ["require", "exports", "@ijstec
         $nest: {
             '&:hover': {
                 border: `1px solid ${Theme.colors.primary.main}`
+            },
+            'span': {
+                display: 'inline-block',
+                marginRight: 'auto',
+                marginLeft: '0.5rem'
             }
         }
     });
@@ -252,7 +257,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
             if (this._selectedNetwork) {
                 const img = this._selectedNetwork?.image || undefined;
                 this.btnNetwork.caption = this._selectedNetwork?.chainName ?? '';
-                this.btnNetwork.icon = new components_3.Icon(this.btnNetwork, { image: { url: img, width: 24, height: 24 } });
+                this.btnNetwork.icon = new components_3.Icon(this.btnNetwork, { image: { url: img, width: 24, height: 24, margin: { right: 'auto' } } });
             }
             else {
                 this.btnNetwork.caption = this.type === 'button' ? '$unsupported_network' : this.networkPlaceholder;
@@ -386,7 +391,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 },
                 border: { radius: 5, width: '1px', style: 'solid', color: Theme.divider },
                 font: { color: Theme.text.primary },
-                rightIcon: { name: 'angle-down', width: 20, height: 20, fill: Theme.text.primary },
+                rightIcon: { name: 'angle-down', width: 20, height: 20, fill: Theme.text.primary, margin: { left: 'auto' } },
                 background: { color: 'transparent' },
                 caption: '',
                 class: index_css_1.buttonStyles,
