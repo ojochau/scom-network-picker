@@ -105,7 +105,7 @@ declare module "@scom/scom-network-picker" {
         setNetworkByChainId(chainId: number): void;
         clearNetwork(): void;
         private getNetwork;
-        private getNetworkLabel;
+        private updateButton;
         private setNetwork;
         private onNetworkSelected;
         private renderNetworks;

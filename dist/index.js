@@ -76,6 +76,11 @@ define("@scom/scom-network-picker/index.css.ts", ["require", "exports", "@ijstec
         $nest: {
             '&:hover': {
                 border: `1px solid ${Theme.colors.primary.main}`
+            },
+            'span': {
+                display: 'inline-block',
+                marginRight: 'auto',
+                marginLeft: '0.5rem'
             }
         }
     });
@@ -248,24 +253,21 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
         getNetwork(chainId) {
             return this._networkList.find(net => net.chainId === chainId) || null;
         }
-        getNetworkLabel() {
+        updateButton() {
             if (this._selectedNetwork) {
                 const img = this._selectedNetwork?.image || undefined;
-                return `<i-hstack verticalAlignment="center" gap="0.5rem">
-        <i-panel>
-          <i-image width=${24} height=${24} url="${img}"></i-image>
-        </i-panel>
-        <i-label caption="${this._selectedNetwork?.chainName ?? ''}" textOverflow="ellipsis"></i-label>
-      </i-hstack>`;
+                this.btnNetwork.caption = this._selectedNetwork?.chainName ?? '';
+                this.btnNetwork.icon = new components_3.Icon(this.btnNetwork, { image: { url: img, width: 24, height: 24, margin: { right: 'auto' } } });
             }
             else {
-                return this.type === 'button' ? '$unsupported_network' : this.networkPlaceholder;
+                this.btnNetwork.caption = this.type === 'button' ? '$unsupported_network' : this.networkPlaceholder;
+                this.btnNetwork.icon = undefined;
             }
         }
         setNetwork(network) {
             this._selectedNetwork = network;
             if (this.btnNetwork) {
-                this.btnNetwork.caption = this.getNetworkLabel();
+                this.updateButton();
                 this.btnNetwork.opacity = 1;
             }
             this.networkMapper?.forEach((value, key) => {
@@ -356,7 +358,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 },
                 border: { radius: 5 },
                 font: { color: Theme.colors.primary.contrastText },
-                caption: this.getNetworkLabel(),
+                caption: '',
                 boxShadow: 'none',
                 onClick: () => {
                     if (this.readOnly) {
@@ -367,6 +369,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 }
             });
             this.btnNetwork.id = 'btnNetwork';
+            this.updateButton();
         }
         async renderCombobox() {
             this.mdNetwork = await components_3.Modal.create({
@@ -388,9 +391,9 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                 },
                 border: { radius: 5, width: '1px', style: 'solid', color: Theme.divider },
                 font: { color: Theme.text.primary },
-                rightIcon: { name: 'angle-down', width: 20, height: 20, fill: Theme.text.primary },
+                rightIcon: { name: 'angle-down', width: 20, height: 20, fill: Theme.text.primary, margin: { left: 'auto' } },
                 background: { color: 'transparent' },
-                caption: this.getNetworkLabel(),
+                caption: '',
                 class: index_css_1.buttonStyles,
                 onClick: () => {
                     if (this.readOnly) {
@@ -401,6 +404,7 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
                     this.btnNetwork.classList.add(index_css_1.focusStyles);
                 }
             });
+            this.updateButton();
             this.mdNetwork.onClose = () => {
                 this.btnNetwork.opacity = 1;
             };

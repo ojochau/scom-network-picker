@@ -24,6 +24,11 @@ export const buttonStyles = Styles.style({
   $nest: {
     '&:hover': {
       border: `1px solid ${Theme.colors.primary.main}`
+    },
+    'span': {
+      display: 'inline-block',
+      marginRight: 'auto',
+      marginLeft: '0.5rem'
     }
   }
 })
