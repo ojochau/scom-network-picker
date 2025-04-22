@@ -245,8 +245,9 @@ define("@scom/scom-network-picker", ["require", "exports", "@ijstech/components"
         }
         clearNetwork() {
             this._selectedNetwork = undefined;
-            this.btnNetwork.caption = this.networkPlaceholder;
-            this.networkMapper.forEach((value, key) => {
+            if (this.btnNetwork)
+                this.btnNetwork.caption = this.networkPlaceholder;
+            this.networkMapper?.forEach((value, key) => {
                 value.classList.remove('is-active');
             });
         }
